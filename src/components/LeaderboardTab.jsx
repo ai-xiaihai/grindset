@@ -10,7 +10,7 @@ export default function LeaderboardTab({ stats }) {
     name: ME.name,
     emoji: ME.emoji,
     vapes: stats.totalVapes + ME.totalVapes,
-    drinks: stats.totalDrinks + ME.totalDrinks,
+    peakBac: ME.peakBac,
     xp: stats.xp + ME.xp,
     isMe: true,
   }
@@ -22,7 +22,7 @@ export default function LeaderboardTab({ stats }) {
     <div className="tab-screen">
       <div className="page-header">
         <div className="page-header-title">Leaderboard</div>
-        <div className="page-header-sub">Global Rankings</div>
+        <div className="page-header-sub">Friend Rankings</div>
       </div>
 
       <div className="tab-body">
@@ -30,7 +30,7 @@ export default function LeaderboardTab({ stats }) {
         <div className="rank-banner">
           <div className="rank-banner-left">
             <div className="rank-banner-rank">#{myRank}</div>
-            <div className="rank-banner-label">Your Global Rank</div>
+            <div className="rank-banner-label">Your Friend Rank</div>
           </div>
           <div className="rank-banner-xp">
             <div className="rank-banner-xp-val">{me.xp.toLocaleString()}</div>
@@ -44,7 +44,7 @@ export default function LeaderboardTab({ stats }) {
             <span className="lb-col-rank">#</span>
             <span className="lb-col-user">User</span>
             <span className="lb-col-stat">💨</span>
-            <span className="lb-col-stat">🥃</span>
+            <span className="lb-col-stat">🩸</span>
             <span className="lb-col-xp">XP</span>
           </div>
 
@@ -61,14 +61,14 @@ export default function LeaderboardTab({ stats }) {
                 <span className="lb-user-name">{user.name}{user.isMe ? ' (you)' : ''}</span>
               </span>
               <span className="lb-col-stat">{user.vapes.toLocaleString()}</span>
-              <span className="lb-col-stat">{user.drinks.toLocaleString()}</span>
+              <span className="lb-col-stat">{user.peakBac != null ? user.peakBac.toFixed(2) : '—'}</span>
               <span className="lb-col-xp">{user.xp.toLocaleString()}</span>
             </div>
           ))}
         </div>
 
         <p className="lb-disclaimer">
-          Rankings update in real time. Other users are very real and definitely not made up.
+          Rankings update in real time. These are your friends and they are definitely real.
         </p>
       </div>
     </div>

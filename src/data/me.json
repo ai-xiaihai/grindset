@@ -7,6 +7,7 @@
   "totalVapes": 47,
   "totalDrinks": 83,
   "totalBacCheckins": 18,
+  "peakBac": 0.11,
   "post": {
     "date": "feb 28 2026",
     "maxBac": "0.08%",

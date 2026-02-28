@@ -1,56 +1,56 @@
 [
   {
     "id": "michael", "name": "Michael", "emoji": "🔥", "color": "#FF4B4B",
-    "vapes": 445, "drinks": 312, "xp": 11540,
+    "vapes": 445, "drinks": 312, "xp": 11540, "peakBac": 0.45,
     "post": { "date": "mar 1 2026", "duration": "3h", "maxBac": "0.45%", "cigs": 1, "route": true, "daps": 4 }
   },
   {
     "id": "katie", "name": "Katie", "emoji": "⭐", "color": "#1CB0F6",
-    "vapes": 234, "drinks": 445, "xp": 10675,
+    "vapes": 234, "drinks": 445, "xp": 10675, "peakBac": 0.38,
     "post": { "date": "feb 28 2026", "duration": "2h 45m", "maxBac": "0.38%", "daps": 7 }
   },
   {
     "id": "frank", "name": "Frank", "emoji": "🎸", "color": "#FF9600",
-    "vapes": 789, "drinks": 234, "xp": 9210,
+    "vapes": 789, "drinks": 234, "xp": 9210, "peakBac": 0.45,
     "post": { "date": "mar 1 2026", "maxBac": "0.45%", "cigs": 3, "daps": 12 }
   },
   {
     "id": "dmitri", "name": "Dmitri", "emoji": "☁️", "color": "#58CC02",
-    "vapes": 1203, "drinks": 89, "xp": 14250,
+    "vapes": 1203, "drinks": 89, "xp": 14250, "peakBac": 0.31,
     "streakWeeks": 9
   },
   {
     "id": "priya", "name": "Priya", "emoji": "🍺", "color": "#CE82FF",
-    "vapes": 234, "drinks": 847, "xp": 13920,
+    "vapes": 234, "drinks": 847, "xp": 13920, "peakBac": 0.52,
     "streakWeeks": 4,
     "post": { "date": "mar 2 2026", "duration": "1h 20m", "maxBac": "0.22%", "cigs": 2, "daps": 9 }
   },
   {
     "id": "marcus", "name": "Marcus", "emoji": "⚔️", "color": "#46A302",
-    "vapes": 567, "drinks": 523, "xp": 13590
+    "vapes": 567, "drinks": 523, "xp": 13590, "peakBac": 0.41
   },
   {
     "id": "yuki", "name": "Yuki", "emoji": "🌅", "color": "#FF9600",
-    "vapes": 890, "drinks": 312, "xp": 11540
+    "vapes": 890, "drinks": 312, "xp": 11540, "peakBac": 0.28
   },
   {
     "id": "fatima", "name": "Fatima", "emoji": "🔥", "color": "#FFD900",
-    "vapes": 445, "drinks": 445, "xp": 10675
+    "vapes": 445, "drinks": 445, "xp": 10675, "peakBac": 0.36
   },
   {
     "id": "carlos", "name": "Carlos", "emoji": "🦋", "color": "#A855F7",
-    "vapes": 123, "drinks": 623, "xp": 10575
+    "vapes": 123, "drinks": 623, "xp": 10575, "peakBac": 0.49
   },
   {
     "id": "siobhan", "name": "Siobhan", "emoji": "🦉", "color": "#CE82FF",
-    "vapes": 356, "drinks": 567, "xp": 9885
+    "vapes": 145, "drinks": 210, "xp": 7200, "peakBac": 0.18
   },
   {
     "id": "kwame", "name": "Kwame", "emoji": "💻", "color": "#1CB0F6",
-    "vapes": 789, "drinks": 234, "xp": 8910
+    "vapes": 98, "drinks": 134, "xp": 5800, "peakBac": 0.14
   },
   {
     "id": "ingrid", "name": "Ingrid", "emoji": "🕔", "color": "#FFD900",
-    "vapes": 67, "drinks": 756, "xp": 8545
+    "vapes": 34, "drinks": 89, "xp": 4200, "peakBac": 0.09
   }
 ]

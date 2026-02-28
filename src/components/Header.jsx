@@ -10,7 +10,7 @@ export default function Header() {
               </div>
             </div>
             <div>
-              <div className="logo-name">GRIDSET</div>
+              <div className="logo-name">GRINDSET</div>
               <div className="logo-tagline">optimize your lifestyle</div>
             </div>
           </div>

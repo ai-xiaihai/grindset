@@ -19,7 +19,7 @@ const INSIGHTS = [
   {
     emoji: '🌬️',
     title: 'Social Optimization',
-    body: '73% of Gridset users report that vaping gives them a reason to step outside. That is technically fresh air exposure.',
+    body: '73% of Grindset users report that vaping gives them a reason to step outside. That is technically fresh air exposure.',
   },
   {
     emoji: '💧',
@@ -47,11 +47,11 @@ const QUOTES = [
   '"You miss 100% of the vapes you don\'t take." — W. Gretzky (adapted)',
   '"Move fast and cloud things." — Silicon Valley proverb',
   '"An apple a day keeps the doctor away. A vape a day keeps the doctor curious." — Anonymous',
-  '"The only bad session is the one you didn\'t log." — Gridset',
-  '"Drink water. But also drink." — Gridset Wellness Team',
+  '"The only bad session is the one you didn\'t log." — Grindset',
+  '"Drink water. But also drink." — Grindset Wellness Team',
   '"Not all who wander are lost. Some are just looking for a good spot to vape." — J.R.R. Tolkien (probably)',
   '"I vape, therefore I am." — René Descartes (paraphrased)',
-  '"The best time to start was yesterday. The second best time is now. The third best time is after this drink." — Gridset',
+  '"The best time to start was yesterday. The second best time is now. The third best time is after this drink." — Grindset',
 ]
 
 export default function Insights() {

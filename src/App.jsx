@@ -11,26 +11,26 @@ import './App.css'
 
 export default function App() {
   const [entries, setEntries] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('gridset-entries') || '[]') }
+    try { return JSON.parse(localStorage.getItem('grindset-entries') || '[]') }
     catch { return [] }
   })
 
   const [bacEntries, setBacEntries] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('gridset-bac') || '[]') }
+    try { return JSON.parse(localStorage.getItem('grindset-bac') || '[]') }
     catch { return [] }
   })
 
   const [streak, setStreak] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('gridset-streak') || '{"count":0,"lastDate":null}') }
+    try { return JSON.parse(localStorage.getItem('grindset-streak') || '{"count":0,"lastDate":null}') }
     catch { return { count: 0, lastDate: null } }
   })
 
   useEffect(() => {
-    localStorage.setItem('gridset-entries', JSON.stringify(entries))
+    localStorage.setItem('grindset-entries', JSON.stringify(entries))
   }, [entries])
 
   useEffect(() => {
-    localStorage.setItem('gridset-bac', JSON.stringify(bacEntries))
+    localStorage.setItem('grindset-bac', JSON.stringify(bacEntries))
   }, [bacEntries])
 
   const addBac = (bac, photo = null) => {
@@ -43,7 +43,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    localStorage.setItem('gridset-streak', JSON.stringify(streak))
+    localStorage.setItem('grindset-streak', JSON.stringify(streak))
   }, [streak])
 
   const addEntry = (type, note = '') => {

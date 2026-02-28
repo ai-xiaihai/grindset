@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import eastVillageMap from '../assets/maps/east-village.png'
+import frankNight from '../assets/feed/frank-night.jpg'
 import FRIENDS from '../data/friends.json'
+
+const FEED_PHOTOS = { frank: frankNight }
 
 // ── Mock friend posts (derived from friends.json) ─
 const MOCK_POSTS = FRIENDS
   .filter(f => f.post)
-  .map(f => ({ id: f.id, name: f.name.toLowerCase(), color: f.color, ...f.post }))
+  .map(f => ({ id: f.id, name: f.name.toLowerCase(), color: f.color, photo: FEED_PHOTOS[f.id] ?? null, ...f.post }))
 
 // ── Static map image ─────────────────────────────
 function RouteMap({ color }) {
@@ -66,6 +69,9 @@ function NightOutCard({ post, isMe }) {
           <div className="feed-card-date">{post.date}</div>
         </div>
       </div>
+
+      {/* Photo if present */}
+      {post.photo && <img src={post.photo} alt="" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />}
 
       {/* Map if present */}
       {post.route && <RouteMap color={post.color} />}

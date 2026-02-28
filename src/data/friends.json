@@ -12,7 +12,7 @@
   {
     "id": "frank", "name": "Frank", "emoji": "🎸", "color": "#FF9600",
     "vapes": 789, "drinks": 234, "xp": 9210, "peakBac": 0.45,
-    "post": { "date": "mar 1 2026", "maxBac": "0.45%", "cigs": 3, "daps": 12 }
+    "post": { "date": "mar 1 2026", "duration": "blackout", "maxBac": "0.45%", "cigs": 3, "daps": 12 }
   },
   {
     "id": "dmitri", "name": "Dmitri", "emoji": "☁️", "color": "#58CC02",

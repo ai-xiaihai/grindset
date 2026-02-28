@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import FRIENDS from '../data/friends.json'
+import ME from '../data/me.json'
 import firstInhaleImg from '../assets/badges/first-inhale.png'
 import twoFistedImg from '../assets/badges/two-fisted.png'
 
@@ -15,14 +17,8 @@ const DUO = {
   orange: '#FF9600',
 }
 
-// ── Friends with fake streak weeks ───────────────
-const FRIENDS = [
-  { name: 'Dmitri',  weeks: 9, emoji: '☁️' },
-  { name: 'Priya',   weeks: 4,  emoji: '🍺' },
-]
+const STREAK_FRIENDS = FRIENDS.filter(f => f.streakWeeks)
 
-// added to real user stats so the profile looks well-used
-const DEMO_BOOST = { xp: 6800, weeks: 13 }
 
 // ── Badges (adapted from Achievements) ───────────
 const BADGES = [
@@ -58,45 +54,41 @@ function weekBacData(bacEntries) {
 
 export default function ProfileTab({ stats, bacEntries }) {
   const { totalVapes, totalDrinks, streak, xp, totalBac, wellnessScore, todayVapes, todayDrinks } = stats
-  const badgeStats = { totalVapes, totalDrinks, streak, todayVapes, todayDrinks }
+  const badgeStats = {
+    totalVapes: totalVapes + ME.totalVapes,
+    totalDrinks: totalDrinks + ME.totalDrinks,
+    streak: streak + ME.streakWeeks * 7,
+    todayVapes,
+    todayDrinks,
+  }
   const [selectedBadge, setSelectedBadge] = useState(null)
 
-  const DEMO_BAC = [
-    { day: 'Sun', bac: 0.042 },
-    { day: 'Mon', bac: 0.0 },
-    { day: 'Tue', bac: 0.078 },
-    { day: 'Wed', bac: 0.0 },
-    { day: 'Thu', bac: 0.091 },
-    { day: 'Fri', bac: 0.110 },
-    { day: 'Sat', bac: 0.084 },
-  ]
   const realData = weekBacData(bacEntries)
   const hasRealData = realData.some(d => d.bac !== null)
   const chartData = hasRealData
-    ? realData.map((d, i) => ({ ...d, bac: d.bac ?? DEMO_BAC[i].bac }))
-    : DEMO_BAC
+    ? realData.map((d, i) => ({ ...d, bac: d.bac ?? ME.weekBac[i].bac }))
+    : ME.weekBac
 
-  // streak in "weeks"
-  const streakWeeks = Math.max(1, Math.round(streak / 7)) || 1
+  const streakWeeks = Math.max(1, Math.round(streak / 7)) + ME.streakWeeks
 
   return (
     <div className="prof-screen">
       {/* ── Avatar + name ── */}
       <div className="prof-hero">
         <div className="prof-avatar">
-          <span>GS</span>
+          <span>{ME.name[0]}</span>
         </div>
-        <h1 className="prof-name">Grindset User</h1>
+        <h1 className="prof-name">{ME.name}</h1>
 
         {/* ── Stat pills ── */}
         <div className="prof-pills">
           <div className="prof-pill prof-pill--green">
-            <span className="prof-pill-val">{(xp + DEMO_BOOST.xp).toLocaleString()}</span>
+            <span className="prof-pill-val">{(xp + ME.xp).toLocaleString()}</span>
             <span className="prof-pill-label">XP</span>
           </div>
           <div className="prof-pill prof-pill--blue">
-            <span className="prof-pill-val">{streakWeeks + DEMO_BOOST.weeks} 🔥</span>
-            <span className="prof-pill-label">{(streakWeeks + DEMO_BOOST.weeks) === 1 ? 'week' : 'weeks'}</span>
+            <span className="prof-pill-val">{streakWeeks} 🔥</span>
+            <span className="prof-pill-label">{streakWeeks === 1 ? 'week' : 'weeks'}</span>
           </div>
         </div>
       </div>
@@ -128,15 +120,15 @@ export default function ProfileTab({ stats, bacEntries }) {
         {/* ── Friend streaks ── */}
         <div className="prof-section-title">friend streaks</div>
         <div className="prof-friends-card">
-          {FRIENDS.map(f => (
-            <div key={f.name} className="prof-friend-row">
+          {STREAK_FRIENDS.map(f => (
+            <div key={f.id} className="prof-friend-row">
               <div className="prof-friend-left">
                 <div className="prof-friend-avatar">{f.emoji}</div>
                 <span className="prof-friend-name">{f.name}</span>
               </div>
               <div className="prof-friend-streak">
-                <span className="prof-friend-weeks">{f.weeks}</span>
-                <span className="prof-friend-wlabel"> {f.weeks === 1 ? 'week' : 'weeks'}</span>
+                <span className="prof-friend-weeks">{f.streakWeeks}</span>
+                <span className="prof-friend-wlabel"> {f.streakWeeks === 1 ? 'week' : 'weeks'}</span>
                 <span className="prof-friend-fire"> 🔥</span>
               </div>
             </div>

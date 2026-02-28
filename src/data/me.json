@@ -1,0 +1,24 @@
+{
+  "name": "Riley",
+  "color": "#58CC02",
+  "emoji": "🧢",
+  "xp": 8420,
+  "streakWeeks": 15,
+  "totalVapes": 47,
+  "totalDrinks": 83,
+  "totalBacCheckins": 18,
+  "post": {
+    "date": "feb 28 2026",
+    "maxBac": "0.08%",
+    "daps": 3
+  },
+  "weekBac": [
+    { "day": "Sun", "bac": 0.042 },
+    { "day": "Mon", "bac": 0.0 },
+    { "day": "Tue", "bac": 0.078 },
+    { "day": "Wed", "bac": 0.0 },
+    { "day": "Thu", "bac": 0.091 },
+    { "day": "Fri", "bac": 0.110 },
+    { "day": "Sat", "bac": 0.084 }
+  ]
+}

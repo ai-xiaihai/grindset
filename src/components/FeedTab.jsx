@@ -1,53 +1,11 @@
 import { useState } from 'react'
 import eastVillageMap from '../assets/maps/east-village.png'
+import FRIENDS from '../data/friends.json'
 
-// ── Mock friend posts ─────────────────────────────
-const MOCK_POSTS = [
-  {
-    id: 'm3',
-    name: 'michael',
-    date: 'mar 1 2026',
-    duration: '3h',
-    maxBac: '0.45%',
-    cigs: 1,
-    route: true,
-    color: '#FF4B4B',
-    daps: 4,
-  },
-  {
-    id: 'm1',
-    name: 'katie',
-    date: 'feb 28 2026',
-    duration: '2h 45m',
-    maxBac: '0.38%',
-    cigs: null,
-    path: null,
-    color: '#1CB0F6',
-    daps: 7,
-  },
-  {
-    id: 'm2',
-    name: 'frank',
-    date: 'mar 1 2026',
-    duration: null,
-    maxBac: '0.45%',
-    cigs: 3,
-    path: null,
-    color: '#FF9600',
-    daps: 12,
-  },
-  {
-    id: 'm4',
-    name: 'priya',
-    date: 'mar 2 2026',
-    duration: '1h 20m',
-    maxBac: '0.22%',
-    cigs: 2,
-    path: null,
-    color: '#CE82FF',
-    daps: 9,
-  },
-]
+// ── Mock friend posts (derived from friends.json) ─
+const MOCK_POSTS = FRIENDS
+  .filter(f => f.post)
+  .map(f => ({ id: f.id, name: f.name.toLowerCase(), color: f.color, ...f.post }))
 
 // ── Static map image ─────────────────────────────
 function RouteMap({ color }) {

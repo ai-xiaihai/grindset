@@ -1,27 +1,17 @@
-const MOCK_USERS = [
-  { name: 'Dmitri',   emoji: '☁️',  vapes: 1203, drinks: 89,  xp: 14250 },
-  { name: 'Priya',    emoji: '🍺',  vapes: 234,  drinks: 847, xp: 13920 },
-  { name: 'Marcus',   emoji: '⚔️',  vapes: 567,  drinks: 523, xp: 13590 },
-  { name: 'Yuki',     emoji: '🌅',  vapes: 890,  drinks: 312, xp: 11540 },
-  { name: 'Fatima',   emoji: '🔥',  vapes: 445,  drinks: 445, xp: 10675 },
-  { name: 'Carlos',   emoji: '🦋',  vapes: 123,  drinks: 623, xp: 10575 },
-  { name: 'Siobhan',  emoji: '🦉',  vapes: 356,  drinks: 567, xp: 9885  },
-  { name: 'Kwame',    emoji: '💻',  vapes: 789,  drinks: 234, xp: 8910  },
-  { name: 'Ingrid',   emoji: '🕔',  vapes: 67,   drinks: 756, xp: 8545  },
-  { name: 'Tariq',    emoji: '🤫',  vapes: 234,  drinks: 345, xp: 5535  },
-  { name: 'Mei',      emoji: '📅',  vapes: 45,   drinks: 189, xp: 3225  },
-  { name: 'Bogdan',   emoji: '👶',  vapes: 12,   drinks: 23,  xp: 585   },
-]
+import FRIENDS from '../data/friends.json'
+import ME from '../data/me.json'
+
+const MOCK_USERS = FRIENDS
 
 const RANK_MEDALS = ['🥇', '🥈', '🥉']
 
 export default function LeaderboardTab({ stats }) {
   const me = {
-    name: 'You',
-    emoji: '👤',
-    vapes: stats.totalVapes,
-    drinks: stats.totalDrinks,
-    xp: stats.xp,
+    name: ME.name,
+    emoji: ME.emoji,
+    vapes: stats.totalVapes + ME.totalVapes,
+    drinks: stats.totalDrinks + ME.totalDrinks,
+    xp: stats.xp + ME.xp,
     isMe: true,
   }
 
@@ -43,7 +33,7 @@ export default function LeaderboardTab({ stats }) {
             <div className="rank-banner-label">Your Global Rank</div>
           </div>
           <div className="rank-banner-xp">
-            <div className="rank-banner-xp-val">{stats.xp.toLocaleString()}</div>
+            <div className="rank-banner-xp-val">{me.xp.toLocaleString()}</div>
             <div className="rank-banner-xp-label">XP</div>
           </div>
         </div>
@@ -68,7 +58,7 @@ export default function LeaderboardTab({ stats }) {
               </span>
               <span className="lb-col-user">
                 <span className="lb-user-emoji">{user.emoji}</span>
-                <span className="lb-user-name">{user.isMe ? 'You' : user.name}</span>
+                <span className="lb-user-name">{user.name}{user.isMe ? ' (you)' : ''}</span>
               </span>
               <span className="lb-col-stat">{user.vapes.toLocaleString()}</span>
               <span className="lb-col-stat">{user.drinks.toLocaleString()}</span>

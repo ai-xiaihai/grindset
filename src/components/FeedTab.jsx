@@ -96,7 +96,7 @@ function NightOutCard({ post, isMe }) {
           {post.name[0].toUpperCase()}
         </div>
         <div>
-          <div className="feed-card-name">{post.name}{isMe ? ' (you)' : ''}</div>
+          <div className="feed-card-name">{post.name}</div>
           <div className="feed-card-date">{post.date}</div>
         </div>
       </div>
@@ -114,7 +114,7 @@ function NightOutCard({ post, isMe }) {
         )}
         {post.maxBac && (
           <div className="feed-stat">
-            <div className="feed-stat-label">max bac</div>
+            <div className="feed-stat-label">{post.bacLabel ?? 'max bac'}</div>
             <div className="feed-stat-val">{post.maxBac}</div>
           </div>
         )}
@@ -171,14 +171,15 @@ export default function FeedTab({ entries, bacEntries, stats }) {
   const hasActivity = stats.totalVapes > 0 || stats.totalDrinks > 0 || stats.totalBac > 0
   const myPost = hasActivity ? {
     id: 'me',
-    name: 'you',
+    name: 'alex',
     date: dateStr,
     duration: null,
-    maxBac: bacEntries.length > 0 ? `${Math.max(...bacEntries.map(e => e.bac)).toFixed(2)}%` : null,
-    cigs: stats.totalVapes > 0 ? stats.totalVapes : null,
+    maxBac: bacEntries.length > 0 ? `${Math.max(...bacEntries.map(e => e.bac)).toFixed(2)}%` : '0.08%',
+    bacLabel: 'bac',
+    cigs: null,
     path: null,
     color: '#58CC02',
-    daps: 0,
+    daps: 3,
   } : null
 
   const allPosts = myPost ? [MOCK_POSTS[0], myPost, ...MOCK_POSTS.slice(1)] : MOCK_POSTS

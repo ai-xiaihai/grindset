@@ -22,7 +22,6 @@ export default function LeaderboardTab({ stats }) {
     <div className="tab-screen">
       <div className="page-header">
         <div className="page-header-title">Leaderboard</div>
-        <div className="page-header-sub">Friend Rankings</div>
       </div>
 
       <div className="tab-body">

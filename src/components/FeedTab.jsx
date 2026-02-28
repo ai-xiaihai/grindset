@@ -173,11 +173,8 @@ export default function FeedTab({ entries, bacEntries, stats }) {
   return (
     <div className="feed-screen">
       {/* Header */}
-      <div className="feed-header">
-        <span className="feed-header-logo">GRINDSET</span>
-        <span className="feed-header-date">
-          {today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
-        </span>
+      <div className="page-header">
+        <div className="page-header-logo">GRINDSET</div>
       </div>
 
       <div className="feed-body">

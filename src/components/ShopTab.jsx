@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import spiritsBar from '../assets/shops/spirits-bar.jpg'
+import whiskeyShelf from '../assets/shops/whiskey-shelf.webp'
 
 const TOP_CATS = [
   { id: 'deals',   label: 'Deals',    emoji: '🔥', bg: '#fff1f2', fg: '#be123c' },
@@ -30,8 +32,7 @@ const STORES = [
     rating: 4.8, reviews: '2.1k',
     time: '25–35', fee: '$1.99',
     deal: '20% off select wines',
-    gradient: 'linear-gradient(135deg, #7c2d12 0%, #c2410c 100%)',
-    emoji: '🍷',
+    photo: spiritsBar,
     category: ['wine', 'spirits', 'beer'],
   },
   {
@@ -52,8 +53,7 @@ const STORES = [
     rating: 4.9, reviews: '987',
     time: '30–40', fee: '$2.49',
     deal: 'Free delivery on $50+',
-    gradient: 'linear-gradient(135deg, #312e81 0%, #6d28d9 100%)',
-    emoji: '🥃',
+    photo: whiskeyShelf,
     category: ['spirits'],
   },
   {
@@ -222,8 +222,14 @@ export default function ShopTab() {
             <div className="shop-empty">No stores match your filters.</div>
           ) : filtered.map(store => (
             <div key={store.id} className="shop-store-card">
-              <div className="shop-store-hero" style={{ background: store.gradient }}>
-                <span className="shop-store-hero-emoji">{store.emoji}</span>
+              <div
+                className="shop-store-hero"
+                style={store.photo
+                  ? { backgroundImage: `url(${store.photo})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                  : { background: store.gradient }
+                }
+              >
+                {!store.photo && <span className="shop-store-hero-emoji">{store.emoji}</span>}
                 {store.deal && (
                   <div className="shop-store-deal-badge">🔥 {store.deal}</div>
                 )}

@@ -1,137 +1,225 @@
-import BACGraph from './BACGraph'
-import Insights from './Insights'
+import { useState } from 'react'
+import eastVillageMap from '../assets/maps/east-village.png'
 
-function relativeTime(iso) {
-  const diff = Date.now() - new Date(iso)
-  if (diff < 60_000) return 'just now'
-  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`
-  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
+// ── Mock friend posts ─────────────────────────────
+const MOCK_POSTS = [
+  {
+    id: 'm3',
+    name: 'michael',
+    date: 'mar 1 2026',
+    duration: '3h',
+    maxBac: '0.45%',
+    cigs: 1,
+    route: true,
+    color: '#FF4B4B',
+    daps: 4,
+  },
+  {
+    id: 'm1',
+    name: 'katie',
+    date: 'feb 28 2026',
+    duration: '2h 45m',
+    maxBac: '0.38%',
+    cigs: null,
+    path: null,
+    color: '#1CB0F6',
+    daps: 7,
+  },
+  {
+    id: 'm2',
+    name: 'frank',
+    date: 'mar 1 2026',
+    duration: null,
+    maxBac: '0.45%',
+    cigs: 3,
+    path: null,
+    color: '#FF9600',
+    daps: 12,
+  },
+  {
+    id: 'm4',
+    name: 'priya',
+    date: 'mar 2 2026',
+    duration: '1h 20m',
+    maxBac: '0.22%',
+    cigs: 2,
+    path: null,
+    color: '#CE82FF',
+    daps: 9,
+  },
+]
 
-const ENTRY_META = {
-  vape:  { icon: '💨', label: 'Vape Session',  color: 'teal' },
-  drink: { icon: '🥃', label: 'Drink',          color: 'amber' },
-  bac:   { icon: '🩸', label: 'BAC Reading',    color: 'red' },
-}
-
-function BacFeedPost({ entry }) {
+// ── Static map image ─────────────────────────────
+function RouteMap({ color }) {
   return (
-    <div className="feed-bac-post">
-      {entry.socialPhoto && (
-        <img src={entry.socialPhoto} alt="social" className="feed-bac-post-social-img" />
-      )}
-      <div className="feed-bac-post-body">
-        <div className="feed-bac-post-header">
-          <span className="feed-bac-post-icon">🩸</span>
-          <span className="feed-bac-post-title">BAC Reading</span>
-          {entry.bac != null && !isNaN(entry.bac) && (
-            <span className="feed-bac-badge">{Number(entry.bac).toFixed(3)} g/dL</span>
-          )}
-        </div>
-        {entry.comment && <p className="feed-bac-post-comment">{entry.comment}</p>}
-        {entry.photo && (
-          <img src={entry.photo} alt="Breathalyzer" className="feed-bac-breath-img" />
-        )}
-        <div className="feed-bac-post-time">{relativeTime(entry.timestamp)}</div>
-      </div>
+    <div className="feed-map feed-map--route" style={{ position: 'relative' }}>
+      <img src={eastVillageMap} alt="East Village map" style={{ width: '100%', height: 190, objectFit: 'cover', display: 'block' }} />
+      <svg viewBox="0 0 320 190" width="100%" height="190" style={{ position: 'absolute', top: 0, left: 0 }}>
+        {/* Astor Pl → E 8th east to 3rd Ave → north to E 11th → east to 2nd Ave → south to E 5th → west back to Lafayette */}
+        <path
+          d="M 33 95 L 117 150 L 170 70 L 223 100 L 202 137 L 185 146"
+          fill="none" stroke="rgba(0,0,0,0.22)" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"
+        />
+        <path
+          d="M 33 95 L 117 150 L 170 70 L 223 100 L 202 137 L 185 146"
+          fill="none" stroke={color} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"
+        />
+        <circle cx="33" cy="95" r="7" fill="#58CC02" stroke="#fff" strokeWidth="2.5" />
+        <circle cx="33" cy="95" r="2.5" fill="#fff" />
+        <path d="M 193 146 C 193 138 185 132 185 132 C 185 132 177 138 177 146 C 177 153 185 154 185 154 C 185 154 193 153 193 146 Z" fill={color} stroke="#fff" strokeWidth="2" />
+        <circle cx="185" cy="146" r="3" fill="#fff" />
+      </svg>
     </div>
   )
 }
 
-function FeedEntry({ entry }) {
-  if (entry.type === 'bac') return <BacFeedPost entry={entry} />
-  const meta = ENTRY_META[entry.type] || ENTRY_META.vape
-  return (
-    <div className={`feed-entry feed-entry--${meta.color}`}>
-      <div className="feed-entry-icon">{meta.icon}</div>
-      <div className="feed-entry-body">
-        <div className="feed-entry-label">
-          {meta.label}
-          {entry.note && <span className="feed-entry-note"> · {entry.note}</span>}
-        </div>
-        <div className="feed-entry-time">{relativeTime(entry.timestamp)}</div>
-      </div>
-      {entry.photo && <img src={entry.photo} alt="" className="feed-entry-photo" />}
-    </div>
-  )
-}
+// ── Single feed card ──────────────────────────────
+function NightOutCard({ post, isMe }) {
+  const [daps, setDaps] = useState(post.daps)
+  const [daped, setDaped] = useState(false)
+  const [commenting, setCommenting] = useState(false)
+  const [comment, setComment] = useState('')
+  const [comments, setComments] = useState([])
 
-export default function FeedTab({ entries, bacEntries, stats }) {
-  const today = new Date().toDateString()
-  const todayBac = bacEntries.filter(e => new Date(e.timestamp).toDateString() === today)
+  const handleDap = () => {
+    if (daped) return
+    setDaps(d => d + 1)
+    setDaped(true)
+  }
 
-  // Merge and sort all entries chronologically
-  const allFeed = [
-    ...entries.map(e => ({ ...e })),
-    ...bacEntries.map(e => ({ ...e, type: 'bac' })),
-  ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-
-  const hasTodayActivity = stats.todayVapes > 0 || stats.todayDrinks > 0 || todayBac.length > 0
+  const handleSend = () => {
+    if (!comment.trim()) return
+    setComments(c => [...c, comment.trim()])
+    setComment('')
+    setCommenting(false)
+  }
 
   return (
-    <div className="tab-screen">
+    <div className="feed-card" style={{ '--card-color': post.color }}>
+      <div className="feed-card-accent" />
+
       {/* Header */}
-      <div className="page-header">
-        <div className="page-header-logo">GRINDSET</div>
-        <div className="page-header-date">
-          {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+      <div className="feed-card-header">
+        <div className="feed-card-avatar" style={{ background: post.color }}>
+          {post.name[0].toUpperCase()}
+        </div>
+        <div>
+          <div className="feed-card-name">{post.name}</div>
+          <div className="feed-card-date">{post.date}</div>
         </div>
       </div>
 
-      <div className="tab-body">
-        {/* Today summary */}
-        {hasTodayActivity ? (
-          <div className="today-summary">
-            <div className="today-summary-label">Today</div>
-            <div className="today-pills">
-              {stats.todayVapes > 0 && (
-                <span className="today-pill today-pill--teal">💨 {stats.todayVapes} vape{stats.todayVapes !== 1 ? 's' : ''}</span>
-              )}
-              {stats.todayDrinks > 0 && (
-                <span className="today-pill today-pill--amber">🥃 {stats.todayDrinks} drink{stats.todayDrinks !== 1 ? 's' : ''}</span>
-              )}
-              {todayBac.length > 0 && todayBac[0].bac != null && (
-                <span className="today-pill today-pill--red">🩸 BAC {Number(todayBac[0].bac).toFixed(3)}</span>
-              )}
-              <span className="today-pill today-pill--slate">✦ {stats.wellnessScore}/100</span>
-            </div>
-          </div>
-        ) : (
-          <div className="today-empty">
-            <p>Nothing logged yet today.</p>
-            <p>Your potential remains untapped.</p>
+      {/* Map if present */}
+      {post.route && <RouteMap color={post.color} />}
+
+      {/* Stats */}
+      <div className="feed-card-stats">
+        {post.duration && (
+          <div className="feed-stat">
+            <div className="feed-stat-label">duration</div>
+            <div className="feed-stat-val">{post.duration}</div>
           </div>
         )}
-
-        {/* BAC graph if readings today */}
-        {todayBac.length > 0 && (
-          <div className="feed-section">
-            <BACGraph entries={bacEntries} />
+        {post.maxBac && (
+          <div className="feed-stat">
+            <div className="feed-stat-label">{post.bacLabel ?? 'max bac'}</div>
+            <div className="feed-stat-val">{post.maxBac}</div>
           </div>
         )}
+        {post.cigs != null && (
+          <div className="feed-stat">
+            <div className="feed-stat-label"># of cigs</div>
+            <div className="feed-stat-val">{post.cigs}</div>
+          </div>
+        )}
+      </div>
 
-        {/* Insights */}
-        <div className="feed-section">
-          <Insights />
-        </div>
+      {/* Actions */}
+      <div className="feed-card-actions">
+        <button
+          className={`feed-dap-btn${daped ? ' feed-dap-btn--done' : ''}`}
+          style={daped ? { background: post.color, boxShadow: `0 4px 0 ${post.color}aa` } : {}}
+          onClick={handleDap}
+        >
+          {daped ? `👊 ${daps}` : `👊 dap up${daps > 0 ? ` · ${daps}` : ''}`}
+        </button>
+        <button className="feed-comment-btn" onClick={() => setCommenting(v => !v)}>
+          💬 comment
+        </button>
+      </div>
 
-        {/* Activity feed */}
-        <div className="feed-section">
-          <div className="section-title">Activity</div>
-          {allFeed.length === 0 ? (
-            <div className="feed-empty">
-              <p>No activity yet.</p>
-              <p>Head to Record to start your journey.</p>
+      {comments.length > 0 && (
+        <div className="feed-comments-list">
+          {comments.map((c, i) => (
+            <div key={i} className="feed-comment-item">
+              <span className="feed-comment-you">you</span> {c}
             </div>
-          ) : (
-            <div className="feed-list">
-              {allFeed.slice(0, 40).map(entry => (
-                <FeedEntry key={entry.id} entry={entry} />
-              ))}
-            </div>
-          )}
+          ))}
         </div>
+      )}
+
+      {commenting && (
+        <div className="feed-comment-box">
+          <button className="feed-comment-dismiss" onClick={() => { setComment(''); setCommenting(false) }}>
+            ✕
+          </button>
+          <input
+            className="feed-comment-input"
+            placeholder="say something..."
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSend()}
+            autoFocus
+          />
+          <button
+            className="feed-comment-send"
+            style={{ background: post.color }}
+            onClick={handleSend}
+          >
+            send
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Main FeedTab ──────────────────────────────────
+export default function FeedTab({ entries, bacEntries, stats }) {
+  const today = new Date()
+  const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toLowerCase()
+
+  // build a "your post" card if there's recent activity
+  const hasActivity = stats.totalVapes > 0 || stats.totalDrinks > 0 || stats.totalBac > 0
+  const myPost = hasActivity ? {
+    id: 'me',
+    name: 'alex',
+    date: dateStr,
+    duration: null,
+    maxBac: bacEntries.length > 0 ? `${Math.max(...bacEntries.map(e => e.bac)).toFixed(2)}%` : '0.08%',
+    bacLabel: 'bac',
+    cigs: null,
+    path: null,
+    color: '#58CC02',
+    daps: 3,
+  } : null
+
+  const allPosts = myPost ? [MOCK_POSTS[0], myPost, ...MOCK_POSTS.slice(1)] : MOCK_POSTS
+
+  return (
+    <div className="feed-screen">
+      {/* Header */}
+      <div className="feed-header">
+        <span className="feed-header-logo">GRINDSET</span>
+        <span className="feed-header-date">
+          {today.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+        </span>
+      </div>
+
+      <div className="feed-body">
+        {allPosts.map(post => (
+          <NightOutCard key={post.id} post={post} isMe={post.id === 'me'} />
+        ))}
       </div>
     </div>
   )

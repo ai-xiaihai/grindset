@@ -18,7 +18,7 @@ function fmt(secs) {
 
 function DuoBtn({ label, color, shadow, onClick, size = 'md', outline = false }) {
   const sizes = {
-    lg: { padding: '18px 0', fontSize: 20, radius: 18 },
+    lg: { padding: '38px 0', fontSize: 22, radius: 20 },
     md: { padding: '14px 0', fontSize: 17, radius: 16 },
     sm: { padding: '11px 0', fontSize: 15, radius: 14 },
   }
@@ -356,6 +356,7 @@ export default function RecordTab({ onAddEntry, onAddBac, onNavigate }) {
   const [elapsed, setElapsed] = useState(0)
   const [bacCount, setBacCount] = useState(0)
   const [cigCount, setCigCount] = useState(0)
+  const returnPhaseRef = useRef('idle')
   const intervalRef = useRef(null)
 
   useEffect(() => {
@@ -368,11 +369,6 @@ export default function RecordTab({ onAddEntry, onAddBac, onNavigate }) {
   }, [phase])
 
   const xpGained = bacCount * 25 + cigCount * 10 + Math.floor(elapsed / 60) * 5
-
-  const handleAddBac = () => {
-    onAddBac(0.08)
-    setBacCount(c => c + 1)
-  }
 
   const handleAddCig = () => {
     onAddEntry('vape')
@@ -390,15 +386,25 @@ export default function RecordTab({ onAddEntry, onAddBac, onNavigate }) {
     setCigCount(0)
   }
 
+  const goToAddBac = (from) => {
+    returnPhaseRef.current = from
+    setPhase('addbac')
+  }
+
   const handlePost = (bac, breathPhoto, comment, socialPhoto, genericPhoto) => {
     onAddBac(bac, breathPhoto, comment, socialPhoto, genericPhoto)
-    setPhase('idle')
-    onNavigate('feed')
+    if (returnPhaseRef.current === 'running') {
+      setBacCount(c => c + 1)
+      setPhase('running')
+    } else {
+      setPhase('idle')
+      onNavigate('feed')
+    }
   }
 
   if (phase === 'addbac') return (
     <AddBacScreen
-      onBack={() => setPhase('idle')}
+      onBack={() => setPhase(returnPhaseRef.current)}
       onPost={handlePost}
     />
   )
@@ -406,7 +412,7 @@ export default function RecordTab({ onAddEntry, onAddBac, onNavigate }) {
   if (phase === 'idle') return (
     <IdleScreen
       onStartNight={() => setPhase('running')}
-      onAddBac={() => setPhase('addbac')}
+      onAddBac={() => goToAddBac('idle')}
       onAddCig={handleAddCig}
     />
   )
@@ -416,7 +422,7 @@ export default function RecordTab({ onAddEntry, onAddBac, onNavigate }) {
       elapsed={elapsed}
       bacCount={bacCount}
       cigCount={cigCount}
-      onAddBac={handleAddBac}
+      onAddBac={() => goToAddBac('running')}
       onAddCig={handleAddCig}
       onPause={() => setPhase('paused')}
     />

@@ -1,4 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import firstInhaleImg from '../assets/badges/first-inhale.png'
+import twoFistedImg from '../assets/badges/two-fisted.png'
 
 // ── Duolingo palette ──────────────────────────────
 const DUO = {
@@ -23,8 +25,8 @@ const DEMO_BOOST = { xp: 6800, weeks: 13 }
 
 // ── Badges (adapted from Achievements) ───────────
 const BADGES = [
-  { id: 'first-vape',   icon: '💨', name: 'First Inhale',         color: DUO.blue,   check: s => s.totalVapes >= 1 },
-  { id: 'two-fisted',   icon: '⚔️', name: 'Two-Fisted',           color: DUO.red,    check: s => s.todayVapes > 0 && s.todayDrinks > 0 },
+  { id: 'first-vape',   icon: '💨', name: 'First Inhale',         color: DUO.blue,   img: firstInhaleImg, check: s => s.totalVapes >= 1 },
+  { id: 'two-fisted',   icon: '⚔️', name: 'double parked',           color: DUO.red,    img: twoFistedImg,   check: s => s.todayVapes > 0 && s.todayDrinks > 0 },
   { id: 'cloud-chaser', icon: '☁️', name: 'Cloud Chaser',         color: DUO.blue,   check: s => s.todayVapes >= 10 },
   { id: 'open-bar',     icon: '🍸', name: 'Open Bar',             color: DUO.purple, check: s => s.todayDrinks >= 5 },
   { id: 'consistency',  icon: '👑', name: 'Consistency King',     color: DUO.yellow, check: s => s.streak >= 3 },
@@ -143,16 +145,19 @@ export default function ProfileTab({ stats, bacEntries }) {
         <div className="prof-section-title">badges</div>
         <div className="prof-badges-grid">
           {BADGES.map(b => {
-            const earned = b.check(badgeStats)
+            const earned = b.img || b.check(badgeStats)
             return (
               <div key={b.id} className={`prof-badge${earned ? ' prof-badge--earned' : ''}`}>
                 <div
                   className="prof-badge-circle"
-                  style={earned ? { background: b.color, boxShadow: `0 4px 12px ${b.color}55` } : {}}
+                  style={earned && !b.img ? { background: b.color, boxShadow: `0 4px 12px ${b.color}55` } : {}}
                 >
-                  <span>{earned ? b.icon : '🔒'}</span>
+                  {b.img
+                    ? <img src={b.img} alt={b.name} className="prof-badge-img" />
+                    : <span>{earned ? b.icon : '🔒'}</span>
+                  }
                 </div>
-                <span className="prof-badge-name">{b.name}</span>
+                <span className="prof-badge-name">{b.name.toLowerCase()}</span>
               </div>
             )
           })}

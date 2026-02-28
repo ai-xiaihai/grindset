@@ -4,6 +4,7 @@ import FeedTab from './components/FeedTab'
 import LeaderboardTab from './components/LeaderboardTab'
 import RecordTab from './components/RecordTab'
 import ProfileTab from './components/ProfileTab'
+import ShopTab from './components/ShopTab'
 import NudgeModal, { shouldShowNudge, randomFriend } from './components/NudgeModal'
 import './App.css'
 
@@ -75,6 +76,7 @@ export default function App() {
       {tab === 'leaderboard' && <LeaderboardTab stats={stats} />}
       {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} />}
       {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} />}
+      {tab === 'shop'        && <ShopTab />}
       <BottomNav active={tab} onChange={setTab} />
       {nudge && <NudgeModal friend={nudge} onDismiss={() => setNudge(null)} />}
     </div>

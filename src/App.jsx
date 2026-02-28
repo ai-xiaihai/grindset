@@ -5,11 +5,18 @@ import LogForm from './components/LogForm'
 import Timeline from './components/Timeline'
 import Insights from './components/Insights'
 import Achievements from './components/Achievements'
+import BACLogger from './components/BACLogger'
+import BACGraph from './components/BACGraph'
 import './App.css'
 
 export default function App() {
   const [entries, setEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem('gridset-entries') || '[]') }
+    catch { return [] }
+  })
+
+  const [bacEntries, setBacEntries] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('gridset-bac') || '[]') }
     catch { return [] }
   })
 
@@ -21,6 +28,19 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('gridset-entries', JSON.stringify(entries))
   }, [entries])
+
+  useEffect(() => {
+    localStorage.setItem('gridset-bac', JSON.stringify(bacEntries))
+  }, [bacEntries])
+
+  const addBac = (bac, photo = null) => {
+    setBacEntries(prev => [{
+      id: Date.now(),
+      bac,
+      photo,
+      timestamp: new Date().toISOString(),
+    }, ...prev])
+  }
 
   useEffect(() => {
     localStorage.setItem('gridset-streak', JSON.stringify(streak))
@@ -63,9 +83,11 @@ export default function App() {
           <div className="content-grid">
             <div className="left-col">
               <LogForm onAdd={addEntry} />
+              <BACLogger onAdd={addBac} />
               <Insights />
             </div>
             <div className="right-col">
+              <BACGraph entries={bacEntries} />
               <Achievements
                 todayVapes={todayVapes}
                 todayDrinks={todayDrinks}

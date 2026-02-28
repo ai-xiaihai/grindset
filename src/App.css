@@ -70,7 +70,7 @@
 }
 
 .page-header-logo {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 20px;
   letter-spacing: 0.05em;
   color: var(--text);
@@ -295,7 +295,7 @@
 }
 
 .rank-banner-rank {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 40px;
   line-height: 1;
 }
@@ -430,7 +430,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Outfit', sans-serif;
   font-size: 18px;
   color: white;
   flex-shrink: 0;

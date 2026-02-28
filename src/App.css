@@ -1475,3 +1475,217 @@
 
 .shop-store-dot { color: var(--border); }
 .shop-store-rating { color: var(--text); font-weight: 600; }
+
+/* ─── Profile (Duolingo redesign) ───────────────── */
+.prof-screen {
+  min-height: 100dvh;
+  background: #fff;
+  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+
+.prof-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px 24px;
+  background: #fff;
+}
+
+.prof-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #58CC02, #1CB0F6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -1px;
+  box-shadow: 0 6px 20px rgba(88,204,2,0.35);
+  margin-bottom: 14px;
+}
+
+.prof-name {
+  font-size: 26px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 20px;
+  letter-spacing: -0.5px;
+}
+
+.prof-pills {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.prof-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px;
+  border-radius: 16px;
+  min-width: 80px;
+}
+
+.prof-pill--green  { background: #e9fcd4; }
+.prof-pill--blue   { background: #dff4ff; }
+.prof-pill--orange { background: #fff3d6; }
+
+.prof-pill-val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1;
+}
+
+.prof-pill-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+}
+
+.prof-pill--green  .prof-pill-label { color: #46A302; }
+.prof-pill--blue   .prof-pill-label { color: #0A91CC; }
+.prof-pill--orange .prof-pill-label { color: #cc7a00; }
+
+.prof-body {
+  padding: 8px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prof-section-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 16px 0 8px;
+  letter-spacing: -0.3px;
+}
+
+.prof-bac-card {
+  background: #f8fafc;
+  border-radius: 20px;
+  padding: 16px 8px 8px;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.prof-bac-empty {
+  font-size: 14px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.prof-friends-card {
+  background: #f8fafc;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.prof-friend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.prof-friend-row:last-child { border-bottom: none; }
+
+.prof-friend-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.prof-friend-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.prof-friend-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.prof-friend-streak {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.prof-friend-weeks {
+  font-size: 17px;
+  font-weight: 800;
+  color: #1a1a1a;
+}
+
+.prof-friend-wlabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.prof-friend-fire {
+  font-size: 16px;
+}
+
+.prof-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px 8px;
+  padding: 4px 0;
+}
+
+.prof-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.prof-badge-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  transition: transform 0.15s;
+}
+
+.prof-badge--earned .prof-badge-circle {
+  transform: scale(1.05);
+}
+
+.prof-badge-name {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.prof-badge--earned .prof-badge-name {
+  color: #1a1a1a;
+}

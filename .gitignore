@@ -1,3 +1,6 @@
+.npmrc
+.tool-versions
+
 # Logs
 logs
 *.log

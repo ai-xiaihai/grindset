@@ -1,16 +1,8 @@
 import { useState } from 'react'
 
 const FRIENDS = [
-  { name: 'Dmitri',  emoji: '☁️' },
-  { name: 'Priya',   emoji: '🍺' },
-  { name: 'Marcus',  emoji: '⚔️' },
-  { name: 'Yuki',    emoji: '🌅' },
-  { name: 'Fatima',  emoji: '🔥' },
-  { name: 'Carlos',  emoji: '🦋' },
-  { name: 'Siobhan', emoji: '🦉' },
-  { name: 'Kwame',   emoji: '💻' },
-  { name: 'Ingrid',  emoji: '🕔' },
-  { name: 'Tariq',   emoji: '🤫' },
+  { name: 'Frank',  emoji: '☁️', venmo: '@cxn-frank' },
+  { name: 'Katie',   emoji: '⭐', venmo: '@katiechaan' },
 ]
 
 const AMOUNTS = [5, 10, 20]
@@ -26,11 +18,10 @@ export function randomFriend() {
 export default function NudgeModal({ friend, onDismiss }) {
   const [selected, setSelected] = useState(10)
 
-  const venmoHandle = friend.name
-
   const handleVenmo = () => {
+    const handle = (friend.venmo || friend.name).replace(/^@/, '')
     window.open(
-      `https://venmo.com/${venmoHandle}?txn=pay&amount=${selected}&note=get+drinking+again`,
+      `https://venmo.com/${handle}?txn=pay&amount=${selected}&note=get+drinking+again`,
       '_blank'
     )
     onDismiss()

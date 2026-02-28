@@ -1178,6 +1178,23 @@
   filter: brightness(1.1);
 }
 
+.nudge-venmo-input {
+  width: 100%;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  color: #1a1a1a;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.nudge-venmo-input:focus {
+  border-color: #58CC02;
+}
+
 .nudge-dismiss-btn {
   background: none;
   border: none;

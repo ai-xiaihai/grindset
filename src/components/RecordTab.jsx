@@ -154,9 +154,205 @@ function DoneScreen({ elapsed, bacCount, cigCount, xp, onDone }) {
   )
 }
 
+// ── Screen: Add BAC ───────────────────────────────
+function AddBacScreen({ onBack, onPost }) {
+  const [bac, setBac]                 = useState('')
+  const [comment, setComment]         = useState('')
+  const [breathPhoto, setBreathPhoto] = useState(null)
+  const [socialPhoto, setSocialPhoto] = useState(null)
+  const [genericPhoto, setGenericPhoto] = useState(null)
+  const [scanning, setScanning]       = useState(false)
+  const [showCamera, setShowCamera]   = useState(false)
+  const [stream, setStream]           = useState(null)
+  const [cameraError, setCameraError] = useState(null)
+  const breathRef  = useRef()
+  const socialRef  = useRef()
+  const videoRef   = useRef()
+  const canvasRef  = useRef()
+
+  useEffect(() => {
+    if (showCamera && videoRef.current && stream) {
+      videoRef.current.srcObject = stream
+    }
+  }, [showCamera, stream])
+
+  useEffect(() => {
+    return () => { if (stream) stream.getTracks().forEach(t => t.stop()) }
+  }, [stream])
+
+  const startCamera = async () => {
+    setCameraError(null)
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+      })
+      setStream(s)
+      setShowCamera(true)
+    } catch {
+      setCameraError('Camera access denied')
+    }
+  }
+
+  const stopCamera = () => {
+    if (stream) stream.getTracks().forEach(t => t.stop())
+    setStream(null)
+    setShowCamera(false)
+  }
+
+  const capturePhoto = () => {
+    const canvas = canvasRef.current
+    const video  = videoRef.current
+    canvas.width  = video.videoWidth  || 640
+    canvas.height = video.videoHeight || 480
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
+    setGenericPhoto(dataUrl)
+    stopCamera()
+  }
+
+  const readFile = (file, setter) => {
+    const reader = new FileReader()
+    reader.onload = () => setter(reader.result)
+    reader.readAsDataURL(file)
+  }
+
+  const handleBreathChange = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    readFile(file, (url) => {
+      setBreathPhoto(url)
+      setScanning(true)
+      setTimeout(() => { setScanning(false); setBac('0.020') }, 2400)
+    })
+  }
+
+  const parsed = parseFloat(bac)
+  const canPost = bac !== '' && !isNaN(parsed) && parsed >= 0
+
+  // Camera mode: full-screen, no fixed positioning
+  if (showCamera) return (
+    <div className="addbac-cam-screen">
+      <video ref={videoRef} autoPlay playsInline className="addbac-cam-video" />
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <div className="addbac-cam-controls">
+        <button className="addbac-capture-btn" onClick={capturePhoto}>⬤</button>
+        <button className="addbac-cancel-link" onClick={stopCamera}>cancel</button>
+      </div>
+    </div>
+  )
+
+  return (
+    <div className="rec-screen rec-screen--addbac">
+      <div className="addbac-header">
+        <button className="addbac-back" onClick={onBack}>← back</button>
+        <span className="addbac-title">🩸 add bac</span>
+      </div>
+
+      <div className="addbac-body">
+        {/* BAC Amount */}
+        <div className="addbac-field">
+          <label className="addbac-label">BAC Amount</label>
+          <div className="addbac-bac-row">
+            <input
+              className={`addbac-input${scanning ? ' addbac-input--flash' : ''}`}
+              type="number"
+              step="0.001"
+              min="0"
+              max="0.5"
+              placeholder="0.000"
+              value={bac}
+              onChange={e => setBac(e.target.value)}
+            />
+            <span className="addbac-unit">g/dL</span>
+          </div>
+        </div>
+
+        {/* Comment */}
+        <div className="addbac-field">
+          <label className="addbac-label">Comment</label>
+          <textarea
+            className="addbac-textarea"
+            placeholder="how we feeling rn…"
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+            rows={3}
+          />
+        </div>
+
+        {/* Scanning indicator */}
+        {scanning && (
+          <div className="addbac-scan-bar">
+            <span className="addbac-scan-pulse" />
+            scanning breathalyzer…
+          </div>
+        )}
+
+        {cameraError && <p className="addbac-camera-error">{cameraError}</p>}
+
+        {/* Photo buttons */}
+        <div className="addbac-photo-actions">
+          <input ref={breathRef} type="file" accept="image/*" capture="environment" style={{display:'none'}}
+            onChange={handleBreathChange} />
+          <input ref={socialRef} type="file" accept="image/*" capture="environment" style={{display:'none'}}
+            onChange={e => e.target.files[0] && readFile(e.target.files[0], setSocialPhoto)} />
+
+          <button className="addbac-pb" onClick={startCamera}>
+            📷 add photo
+          </button>
+          <button className="addbac-pb addbac-pb--breath" onClick={() => breathRef.current.click()} disabled={scanning}>
+            🫁 breathalyzer photo
+          </button>
+          <button className="addbac-pb addbac-pb--social" onClick={() => socialRef.current.click()}>
+            🤳 add social photo
+          </button>
+        </div>
+
+        {/* Previews */}
+        {(genericPhoto || breathPhoto || socialPhoto) && (
+          <div className="addbac-previews">
+            {genericPhoto && (
+              <div className="addbac-preview">
+                <img src={genericPhoto} alt="Photo" className="addbac-preview-img" />
+                <span className="addbac-preview-tag">photo</span>
+                <button className="addbac-preview-del" onClick={() => setGenericPhoto(null)}>✕</button>
+              </div>
+            )}
+            {breathPhoto && (
+              <div className="addbac-preview">
+                <img src={breathPhoto} alt="Breathalyzer" className="addbac-preview-img" />
+                <span className="addbac-preview-tag">breathalyzer</span>
+                <button className="addbac-preview-del" onClick={() => setBreathPhoto(null)}>✕</button>
+              </div>
+            )}
+            {socialPhoto && (
+              <div className="addbac-preview">
+                <img src={socialPhoto} alt="Social" className="addbac-preview-img" />
+                <span className="addbac-preview-tag">social</span>
+                <button className="addbac-preview-del" onClick={() => setSocialPhoto(null)}>✕</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Post */}
+        <div style={{ marginTop: 8 }}>
+          <DuoBtn
+            label={canPost ? '🩸  post to feed' : 'enter bac to post'}
+            color={canPost ? C.blue : '#94a3b8'}
+            shadow={canPost ? C.blueShadow : '#64748b'}
+            onClick={() => { if (canPost) onPost(parsed, breathPhoto, comment.trim(), socialPhoto, genericPhoto) }}
+            size="lg"
+          />
+        </div>
+        <DuoBtn label="cancel" color={C.red} shadow={C.redShadow} onClick={onBack} size="sm" outline />
+      </div>
+    </div>
+  )
+}
+
 // ── Main RecordTab ────────────────────────────────
-export default function RecordTab({ onAddEntry, onAddBac }) {
-  const [phase, setPhase]     = useState('idle')   // idle | running | paused | done
+export default function RecordTab({ onAddEntry, onAddBac, onNavigate }) {
+  const [phase, setPhase]     = useState('idle')   // idle | addbac | running | paused | done
   const [elapsed, setElapsed] = useState(0)
   const [bacCount, setBacCount] = useState(0)
   const [cigCount, setCigCount] = useState(0)
@@ -194,10 +390,23 @@ export default function RecordTab({ onAddEntry, onAddBac }) {
     setCigCount(0)
   }
 
+  const handlePost = (bac, breathPhoto, comment, socialPhoto, genericPhoto) => {
+    onAddBac(bac, breathPhoto, comment, socialPhoto, genericPhoto)
+    setPhase('idle')
+    onNavigate('feed')
+  }
+
+  if (phase === 'addbac') return (
+    <AddBacScreen
+      onBack={() => setPhase('idle')}
+      onPost={handlePost}
+    />
+  )
+
   if (phase === 'idle') return (
     <IdleScreen
       onStartNight={() => setPhase('running')}
-      onAddBac={handleAddBac}
+      onAddBac={() => setPhase('addbac')}
       onAddCig={handleAddCig}
     />
   )

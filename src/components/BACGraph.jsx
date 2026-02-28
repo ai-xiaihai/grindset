@@ -66,7 +66,9 @@ export default function BACGraph({ entries }) {
     )
   }
 
-  const chartData = todayData.length > 0 ? todayData : allData.slice(0, 20)
+  const chartData = (todayData.length > 0 ? todayData : allData.slice(0, 20))
+    .filter(e => e.bac != null && !isNaN(e.bac))
+  if (chartData.length === 0) return null
   const maxBac = Math.max(...chartData.map(e => e.bac), 0.10)
   const yMax = Math.min(maxBac * 1.25 + 0.01, 0.50)
 
@@ -149,7 +151,7 @@ export default function BACGraph({ entries }) {
             {entries.filter(e => e.photo).slice(0, 8).map(e => (
               <div key={e.id} className="bac-evidence-item">
                 <img src={e.photo} alt="breathalyzer" />
-                <span>{e.bac.toFixed(3)}</span>
+                <span>{e.bac != null ? Number(e.bac).toFixed(3) : '—'}</span>
               </div>
             ))}
           </div>

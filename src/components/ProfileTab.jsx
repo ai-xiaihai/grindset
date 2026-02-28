@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import firstInhaleImg from '../assets/badges/first-inhale.png'
 import twoFistedImg from '../assets/badges/two-fisted.png'
@@ -25,16 +26,16 @@ const DEMO_BOOST = { xp: 6800, weeks: 13 }
 
 // ── Badges (adapted from Achievements) ───────────
 const BADGES = [
-  { id: 'first-vape',   icon: '💨', name: 'First Inhale',         color: DUO.blue,   img: firstInhaleImg, check: s => s.totalVapes >= 1 },
-  { id: 'two-fisted',   icon: '⚔️', name: 'double parked',           color: DUO.red,    img: twoFistedImg,   check: s => s.todayVapes > 0 && s.todayDrinks > 0 },
-  { id: 'cloud-chaser', icon: '☁️', name: 'Cloud Chaser',         color: DUO.blue,   check: s => s.todayVapes >= 10 },
-  { id: 'open-bar',     icon: '🍸', name: 'Open Bar',             color: DUO.purple, check: s => s.todayDrinks >= 5 },
-  { id: 'consistency',  icon: '👑', name: 'Consistency King',     color: DUO.yellow, check: s => s.streak >= 3 },
-  { id: 'devoted',      icon: '🏆', name: 'Devoted',              color: DUO.orange, check: s => s.streak >= 7 },
-  { id: 'quantified',   icon: '📱', name: 'Quantified Self',      color: DUO.green,  check: s => s.totalVapes >= 5 && s.totalDrinks >= 5 },
-  { id: 'centurion',    icon: '💯', name: 'Centurion',            color: DUO.red,    check: s => s.totalVapes >= 100 },
-  { id: 'sommelier',    icon: '🍷', name: 'Sommelier',            color: DUO.purple, check: s => s.totalDrinks >= 50 },
-  { id: 'zero-wellness',icon: '🫀', name: 'Zero Wellness',        color: DUO.red,    check: s => (100 - s.todayVapes * 4 - s.todayDrinks * 3) <= 0 },
+  { id: 'first-vape',   icon: '💨', name: 'First Inhale',     desc: 'Log your very first vape session.',          color: DUO.blue,   img: firstInhaleImg, check: s => s.totalVapes >= 1 },
+  { id: 'two-fisted',   icon: '⚔️', name: 'double parked',    desc: 'Log a vape and a drink on the same day.',    color: DUO.red,    img: twoFistedImg,   check: s => s.todayVapes > 0 && s.todayDrinks > 0 },
+  { id: 'cloud-chaser', icon: '☁️', name: 'Cloud Chaser',     desc: 'Log 10 vape sessions in a single day.',      color: DUO.blue,   check: s => s.todayVapes >= 10 },
+  { id: 'open-bar',     icon: '🍸', name: 'Open Bar',          desc: 'Log 5 drinks in a single day.',              color: DUO.purple, check: s => s.todayDrinks >= 5 },
+  { id: 'consistency',  icon: '👑', name: 'Consistency King',  desc: 'Maintain a 3-day streak.',                   color: DUO.yellow, check: s => s.streak >= 3 },
+  { id: 'devoted',      icon: '🏆', name: 'Devoted',           desc: 'Maintain a 7-day streak.',                   color: DUO.orange, check: s => s.streak >= 7 },
+  { id: 'quantified',   icon: '📱', name: 'Quantified Self',   desc: 'Log 5+ vapes and 5+ drinks total.',          color: DUO.green,  check: s => s.totalVapes >= 5 && s.totalDrinks >= 5 },
+  { id: 'centurion',    icon: '💯', name: 'Centurion',         desc: 'Log 100 total vape sessions.',               color: DUO.red,    check: s => s.totalVapes >= 100 },
+  { id: 'sommelier',    icon: '🍷', name: 'Sommelier',         desc: 'Log 50 total drinks.',                       color: DUO.purple, check: s => s.totalDrinks >= 50 },
+  { id: 'zero-wellness',icon: '🫀', name: 'Zero Wellness',     desc: 'Bring your Wellness Score™ to 0.',           color: DUO.red,    check: s => (100 - s.todayVapes * 4 - s.todayDrinks * 3) <= 0 },
 ]
 
 // ── Build this-week BAC chart data ───────────────
@@ -58,6 +59,7 @@ function weekBacData(bacEntries) {
 export default function ProfileTab({ stats, bacEntries }) {
   const { totalVapes, totalDrinks, streak, xp, totalBac, wellnessScore, todayVapes, todayDrinks } = stats
   const badgeStats = { totalVapes, totalDrinks, streak, todayVapes, todayDrinks }
+  const [selectedBadge, setSelectedBadge] = useState(null)
 
   const DEMO_BAC = [
     { day: 'Sun', bac: 0.042 },
@@ -147,7 +149,11 @@ export default function ProfileTab({ stats, bacEntries }) {
           {BADGES.map(b => {
             const earned = b.img || b.check(badgeStats)
             return (
-              <div key={b.id} className={`prof-badge${earned ? ' prof-badge--earned' : ''}`}>
+              <div
+                key={b.id}
+                className={`prof-badge${earned ? ' prof-badge--earned' : ''}`}
+                onClick={() => setSelectedBadge({ ...b, earned })}
+              >
                 <div
                   className="prof-badge-circle"
                   style={earned && !b.img ? { background: b.color, boxShadow: `0 4px 12px ${b.color}55` } : {}}
@@ -163,6 +169,31 @@ export default function ProfileTab({ stats, bacEntries }) {
           })}
         </div>
       </div>
+
+      {/* ── Badge detail modal ── */}
+      {selectedBadge && (
+        <div className="badge-modal-overlay" onClick={() => setSelectedBadge(null)}>
+          <div className="badge-modal" onClick={e => e.stopPropagation()}>
+            <div
+              className="badge-modal-circle"
+              style={selectedBadge.earned && !selectedBadge.img
+                ? { background: selectedBadge.color, boxShadow: `0 6px 20px ${selectedBadge.color}66` }
+                : {}}
+            >
+              {selectedBadge.img
+                ? <img src={selectedBadge.img} alt={selectedBadge.name} className="badge-modal-img" />
+                : <span>{selectedBadge.earned ? selectedBadge.icon : '🔒'}</span>
+              }
+            </div>
+            <div className={`badge-modal-status${selectedBadge.earned ? ' badge-modal-status--earned' : ''}`}>
+              {selectedBadge.earned ? 'unlocked' : 'locked'}
+            </div>
+            <div className="badge-modal-name">{selectedBadge.name.toLowerCase()}</div>
+            <div className="badge-modal-desc">{selectedBadge.desc}</div>
+            <button className="badge-modal-close" onClick={() => setSelectedBadge(null)}>done</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

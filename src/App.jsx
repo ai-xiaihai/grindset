@@ -22,7 +22,11 @@ export default function App() {
     catch { return [] }
   })
   const [bacEntries, setBacEntries] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('grindset-bac') || '[]') }
+    try {
+      const raw = JSON.parse(localStorage.getItem('grindset-bac') || '[]')
+      // Filter out any corrupt entries (bac must be a valid number)
+      return raw.filter(e => e && e.bac != null && !isNaN(e.bac))
+    }
     catch { return [] }
   })
   const [streak, setStreak] = useState(() => {
@@ -34,9 +38,19 @@ export default function App() {
     shouldShowNudge() ? randomFriend() : null
   )
 
-  useEffect(() => { localStorage.setItem('grindset-entries', JSON.stringify(entries)) }, [entries])
-  useEffect(() => { localStorage.setItem('grindset-bac', JSON.stringify(bacEntries)) }, [bacEntries])
-  useEffect(() => { localStorage.setItem('grindset-streak', JSON.stringify(streak)) }, [streak])
+  useEffect(() => {
+    try { localStorage.setItem('grindset-entries', JSON.stringify(entries)) } catch {}
+  }, [entries])
+  useEffect(() => {
+    try {
+      // Strip large photo data before persisting — photos are session-only
+      const slim = bacEntries.map(({ photo, socialPhoto, genericPhoto, ...rest }) => rest)
+      localStorage.setItem('grindset-bac', JSON.stringify(slim))
+    } catch {}
+  }, [bacEntries])
+  useEffect(() => {
+    try { localStorage.setItem('grindset-streak', JSON.stringify(streak)) } catch {}
+  }, [streak])
 
   const addEntry = (type, note = '') => {
     const now = new Date()
@@ -51,8 +65,8 @@ export default function App() {
     })
   }
 
-  const addBac = (bac, photo = null) => {
-    setBacEntries(prev => [{ id: Date.now(), bac, photo, timestamp: new Date().toISOString() }, ...prev])
+  const addBac = (bac, photo = null, comment = '', socialPhoto = null, genericPhoto = null) => {
+    setBacEntries(prev => [{ id: Date.now(), bac, photo, comment, socialPhoto, genericPhoto, timestamp: new Date().toISOString() }, ...prev])
   }
 
   const today = new Date().toDateString()
@@ -74,7 +88,7 @@ export default function App() {
     <div className="app">
       {tab === 'feed'        && <FeedTab entries={entries} bacEntries={bacEntries} stats={stats} />}
       {tab === 'leaderboard' && <LeaderboardTab stats={stats} />}
-      {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} />}
+      {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} onNavigate={setTab} />}
       {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} />}
       {tab === 'shop'        && <ShopTab />}
       <BottomNav active={tab} onChange={setTab} />

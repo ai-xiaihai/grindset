@@ -1,50 +1,37 @@
 import { useState, useEffect } from 'react'
-import Header from './components/Header'
-import StatGrid from './components/StatGrid'
-import LogForm from './components/LogForm'
-import Timeline from './components/Timeline'
-import Insights from './components/Insights'
-import Achievements from './components/Achievements'
-import BACLogger from './components/BACLogger'
-import BACGraph from './components/BACGraph'
+import BottomNav from './components/BottomNav'
+import FeedTab from './components/FeedTab'
+import LeaderboardTab from './components/LeaderboardTab'
+import RecordTab from './components/RecordTab'
+import ProfileTab from './components/ProfileTab'
 import './App.css'
+
+export function calcXP(entries, bacEntries, streakCount) {
+  const vaped = entries.filter(e => e.type === 'vape').length * 10
+  const drank = entries.filter(e => e.type === 'drink').length * 15
+  const bac = bacEntries.length * 25
+  const streakBonus = streakCount * 50
+  return vaped + drank + bac + streakBonus
+}
 
 export default function App() {
   const [entries, setEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem('grindset-entries') || '[]') }
     catch { return [] }
   })
-
   const [bacEntries, setBacEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem('grindset-bac') || '[]') }
     catch { return [] }
   })
-
   const [streak, setStreak] = useState(() => {
     try { return JSON.parse(localStorage.getItem('grindset-streak') || '{"count":0,"lastDate":null}') }
     catch { return { count: 0, lastDate: null } }
   })
+  const [tab, setTab] = useState('feed')
 
-  useEffect(() => {
-    localStorage.setItem('grindset-entries', JSON.stringify(entries))
-  }, [entries])
-
-  useEffect(() => {
-    localStorage.setItem('grindset-bac', JSON.stringify(bacEntries))
-  }, [bacEntries])
-
-  const addBac = (bac, photo = null) => {
-    setBacEntries(prev => [{
-      id: Date.now(),
-      bac,
-      photo,
-      timestamp: new Date().toISOString(),
-    }, ...prev])
-  }
-
-  useEffect(() => {
-    localStorage.setItem('grindset-streak', JSON.stringify(streak))
-  }, [streak])
+  useEffect(() => { localStorage.setItem('grindset-entries', JSON.stringify(entries)) }, [entries])
+  useEffect(() => { localStorage.setItem('grindset-bac', JSON.stringify(bacEntries)) }, [bacEntries])
+  useEffect(() => { localStorage.setItem('grindset-streak', JSON.stringify(streak)) }, [streak])
 
   const addEntry = (type, note = '') => {
     const now = new Date()
@@ -59,6 +46,10 @@ export default function App() {
     })
   }
 
+  const addBac = (bac, photo = null) => {
+    setBacEntries(prev => [{ id: Date.now(), bac, photo, timestamp: new Date().toISOString() }, ...prev])
+  }
+
   const today = new Date().toDateString()
   const todayEntries = entries.filter(e => new Date(e.timestamp).toDateString() === today)
   const todayVapes = todayEntries.filter(e => e.type === 'vape').length
@@ -66,40 +57,21 @@ export default function App() {
   const totalVapes = entries.filter(e => e.type === 'vape').length
   const totalDrinks = entries.filter(e => e.type === 'drink').length
   const wellnessScore = Math.max(0, 100 - todayVapes * 4 - todayDrinks * 3)
+  const xp = calcXP(entries, bacEntries, streak.count)
+
+  const stats = {
+    todayVapes, todayDrinks, totalVapes, totalDrinks,
+    wellnessScore, streak: streak.count, xp,
+    totalBac: bacEntries.length,
+  }
 
   return (
     <div className="app">
-      <Header />
-      <main className="main">
-        <div className="container">
-          <StatGrid
-            todayVapes={todayVapes}
-            todayDrinks={todayDrinks}
-            wellnessScore={wellnessScore}
-            streak={streak.count}
-            totalVapes={totalVapes}
-            totalDrinks={totalDrinks}
-          />
-          <div className="content-grid">
-            <div className="left-col">
-              <LogForm onAdd={addEntry} />
-              <BACLogger onAdd={addBac} />
-              <Insights />
-            </div>
-            <div className="right-col">
-              <BACGraph entries={bacEntries} />
-              <Achievements
-                todayVapes={todayVapes}
-                todayDrinks={todayDrinks}
-                streak={streak.count}
-                totalVapes={totalVapes}
-                totalDrinks={totalDrinks}
-              />
-              <Timeline entries={entries.slice(0, 30)} />
-            </div>
-          </div>
-        </div>
-      </main>
+      {tab === 'feed'        && <FeedTab entries={entries} bacEntries={bacEntries} stats={stats} />}
+      {tab === 'leaderboard' && <LeaderboardTab stats={stats} />}
+      {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} />}
+      {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} />}
+      <BottomNav active={tab} onChange={setTab} />
     </div>
   )
 }

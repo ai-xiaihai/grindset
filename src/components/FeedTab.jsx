@@ -79,11 +79,19 @@ function NightOutCard({ post, isMe }) {
   const [daped, setDaped] = useState(false)
   const [commenting, setCommenting] = useState(false)
   const [comment, setComment] = useState('')
+  const [comments, setComments] = useState([])
 
   const handleDap = () => {
     if (daped) return
     setDaps(d => d + 1)
     setDaped(true)
+  }
+
+  const handleSend = () => {
+    if (!comment.trim()) return
+    setComments(c => [...c, comment.trim()])
+    setComment('')
+    setCommenting(false)
   }
 
   return (
@@ -140,19 +148,33 @@ function NightOutCard({ post, isMe }) {
         </button>
       </div>
 
+      {comments.length > 0 && (
+        <div className="feed-comments-list">
+          {comments.map((c, i) => (
+            <div key={i} className="feed-comment-item">
+              <span className="feed-comment-you">you</span> {c}
+            </div>
+          ))}
+        </div>
+      )}
+
       {commenting && (
         <div className="feed-comment-box">
+          <button className="feed-comment-dismiss" onClick={() => { setComment(''); setCommenting(false) }}>
+            ✕
+          </button>
           <input
             className="feed-comment-input"
             placeholder="say something..."
             value={comment}
             onChange={e => setComment(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSend()}
             autoFocus
           />
           <button
             className="feed-comment-send"
             style={{ background: post.color }}
-            onClick={() => { setComment(''); setCommenting(false) }}
+            onClick={handleSend}
           >
             send
           </button>

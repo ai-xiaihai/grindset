@@ -2079,3 +2079,33 @@
   cursor: pointer;
   font-family: inherit;
 }
+
+.feed-comment-dismiss {
+  padding: 0 10px;
+  border-radius: 10px;
+  border: none;
+  background: #FF4B4B;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.feed-comments-list {
+  padding: 0 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.feed-comment-item {
+  font-size: 14px;
+  color: #334155;
+}
+
+.feed-comment-you {
+  font-weight: 800;
+  color: #1a1a1a;
+}

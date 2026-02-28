@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import heroImg from '../assets/record/hero.png'
+
+const heroModules = import.meta.glob('../assets/record/*.png', { eager: true })
+const heroImages = Object.values(heroModules).map(m => m.default)
+const randomHero = heroImages[Math.floor(Math.random() * heroImages.length)]
 
 // ── Duolingo palette ──────────────────────────────
 const C = {
@@ -58,7 +61,7 @@ function IdleScreen({ onStartNight, onAddBac, onAddCig }) {
   return (
     <div className="rec-screen">
       <div className="rec-top">
-        <img src={heroImg} alt="" className="rec-owl" style={{ width: 200, height: 200, objectFit: 'contain' }} />
+        <img src={randomHero} alt="" className="rec-owl" style={{ width: 200, height: 200, objectFit: 'contain' }} />
         <h1 className="rec-title">record</h1>
         <p className="rec-subtitle">what are we tracking tonight?</p>
       </div>

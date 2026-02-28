@@ -174,7 +174,7 @@ export default function FeedTab({ entries, bacEntries, stats }) {
     <div className="feed-screen">
       {/* Header */}
       <div className="page-header">
-        <div className="page-header-logo">GRINDSET</div>
+        <div className="page-header-logo">grindset</div>
       </div>
 
       <div className="feed-body">

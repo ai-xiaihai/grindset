@@ -33,7 +33,7 @@ export default function NudgeModal({ friend, onDismiss }) {
         <button className="nudge-close" onClick={onDismiss}>✕</button>
 
         <div className="nudge-avatar">{friend.emoji}</div>
-        <h2 className="nudge-title">Nudge {friend.name}</h2>
+        <h2 className="nudge-title">nudge {friend.name}</h2>
         <p className="nudge-subtitle">to get drinking again 🍻</p>
 
         <div className="nudge-amounts">
@@ -53,7 +53,7 @@ export default function NudgeModal({ friend, onDismiss }) {
         </button>
 
         <button className="nudge-dismiss-btn" onClick={onDismiss}>
-          Dismiss
+          dismiss
         </button>
       </div>
     </div>

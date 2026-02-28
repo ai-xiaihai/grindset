@@ -3,32 +3,32 @@ import spiritsBar from '../assets/shops/spirits-bar.jpg'
 import whiskeyShelf from '../assets/shops/whiskey-shelf.webp'
 
 const TOP_CATS = [
-  { id: 'deals',   label: 'Deals',    emoji: '🔥', bg: '#fff1f2', fg: '#be123c' },
-  { id: 'beer',    label: 'Beer',     emoji: '🍺', bg: '#fefce8', fg: '#854d0e' },
-  { id: 'wine',    label: 'Wine',     emoji: '🍷', bg: '#fdf4ff', fg: '#7e22ce' },
-  { id: 'spirits', label: 'Spirits',  emoji: '🥃', bg: '#fff7ed', fg: '#c2410c' },
-  { id: 'tobacco', label: 'Tobacco',  emoji: '🚬', bg: '#f0fdf4', fg: '#15803d' },
-  { id: 'vapes',   label: 'Vapes',    emoji: '💨', bg: '#ecfeff', fg: '#0e7490' },
-  { id: 'cigars',  label: 'Cigars',   emoji: '🎩', bg: '#fafaf9', fg: '#57534e' },
-  { id: 'bundles', label: 'Bundles',  emoji: '🎁', bg: '#fef9c3', fg: '#a16207' },
+  { id: 'deals',   label: 'deals',    emoji: '🔥', bg: '#fff1f2', fg: '#be123c' },
+  { id: 'beer',    label: 'beer',     emoji: '🍺', bg: '#fefce8', fg: '#854d0e' },
+  { id: 'wine',    label: 'wine',     emoji: '🍷', bg: '#fdf4ff', fg: '#7e22ce' },
+  { id: 'spirits', label: 'spirits',  emoji: '🥃', bg: '#fff7ed', fg: '#c2410c' },
+  { id: 'tobacco', label: 'tobacco',  emoji: '🚬', bg: '#f0fdf4', fg: '#15803d' },
+  { id: 'vapes',   label: 'vapes',    emoji: '💨', bg: '#ecfeff', fg: '#0e7490' },
+  { id: 'cigars',  label: 'cigars',   emoji: '🎩', bg: '#fafaf9', fg: '#57534e' },
+  { id: 'bundles', label: 'bundles',  emoji: '🎁', bg: '#fef9c3', fg: '#a16207' },
 ]
 
 const SUB_CATS = [
-  { id: 'all',       label: 'All' },
-  { id: 'craft',     label: 'Craft Beer' },
-  { id: 'champagne', label: 'Champagne' },
-  { id: 'whiskey',   label: 'Whiskey' },
-  { id: 'tequila',   label: 'Tequila' },
-  { id: 'seltzers',  label: 'Hard Seltzer' },
-  { id: 'disposable',label: 'Disposables' },
-  { id: 'premium',   label: 'Premium' },
+  { id: 'all',       label: 'all' },
+  { id: 'craft',     label: 'craft beer' },
+  { id: 'champagne', label: 'champagne' },
+  { id: 'whiskey',   label: 'whiskey' },
+  { id: 'tequila',   label: 'tequila' },
+  { id: 'seltzers',  label: 'hard seltzer' },
+  { id: 'disposable',label: 'disposables' },
+  { id: 'premium',   label: 'premium' },
 ]
 
 const STORES = [
   {
     id: 1,
-    name: "Total Wine & More",
-    tag: "Alcohol · Wine · Spirits",
+    name: "total wine & more",
+    tag: "alcohol · wine · spirits",
     rating: 4.8, reviews: '2.1k',
     time: '25–35', fee: '$1.99',
     deal: '20% off select wines',
@@ -37,8 +37,8 @@ const STORES = [
   },
   {
     id: 2,
-    name: "BevMo!",
-    tag: "Beer · Wine · Spirits",
+    name: "bevmo!",
+    tag: "beer · wine · spirits",
     rating: 4.6, reviews: '1.4k',
     time: '20–30', fee: 'Free',
     deal: null,
@@ -48,21 +48,21 @@ const STORES = [
   },
   {
     id: 3,
-    name: "Spec's Wines & Spirits",
-    tag: "Spirits · Whiskey · Tequila",
+    name: "spec's wines & spirits",
+    tag: "spirits · whiskey · tequila",
     rating: 4.9, reviews: '987',
     time: '30–40', fee: '$2.49',
-    deal: 'Free delivery on $50+',
+    deal: 'free delivery on $50+',
     photo: whiskeyShelf,
     category: ['spirits'],
   },
   {
     id: 4,
-    name: "Craft Beer Cellar",
-    tag: "Craft Beer · IPAs · Stouts",
+    name: "craft beer cellar",
+    tag: "craft beer · ipas · stouts",
     rating: 4.7, reviews: '634',
     time: '20–30', fee: '$0.99',
-    deal: 'Buy 6 get 1 free',
+    deal: 'buy 6 get 1 free',
     gradient: 'linear-gradient(135deg, #713f12 0%, #d97706 100%)',
     emoji: '🍻',
     category: ['beer', 'craft'],
@@ -137,6 +137,7 @@ export default function ShopTab() {
     <div className="tab-screen">
       {/* Header */}
       <div className="shop-header">
+        <div className="page-header-title" style={{ marginBottom: 10 }}>Shop</div>
         <div className="shop-search-row">
           <div className="shop-search-box">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

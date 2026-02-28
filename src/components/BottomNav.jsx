@@ -1,7 +1,7 @@
 const TABS = [
   {
     id: 'feed',
-    label: 'Feed',
+    label: 'feed',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <line x1="3" y1="6" x2="21" y2="6" />
@@ -12,7 +12,7 @@ const TABS = [
   },
   {
     id: 'leaderboard',
-    label: 'Leaderboard',
+    label: 'leaderboard',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="13" width="5" height="9" rx="1" />
@@ -23,7 +23,7 @@ const TABS = [
   },
   {
     id: 'record',
-    label: 'Record',
+    label: 'record',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <circle cx="12" cy="12" r="9" />
@@ -34,7 +34,7 @@ const TABS = [
   },
   {
     id: 'shop',
-    label: 'Shop',
+    label: 'shop',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
@@ -45,7 +45,7 @@ const TABS = [
   },
   {
     id: 'profile',
-    label: 'Profile',
+    label: 'profile',
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <circle cx="12" cy="8" r="4" />

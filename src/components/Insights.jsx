@@ -3,43 +3,43 @@ import { useState, useEffect } from 'react'
 const INSIGHTS = [
   {
     emoji: '📊',
-    title: 'Consistency is Key',
-    body: 'Users who vape at the same time each day report a 47% improvement in routine adherence. Your body craves structure.',
+    title: 'consistency is key',
+    body: 'users who vape at the same time each day report a 47% improvement in routine adherence. your body craves structure.',
   },
   {
     emoji: '🧠',
-    title: 'The Two-Habit Method',
-    body: 'Pairing a vape with a drink activates dual-reward pathways. Our data shows 3× higher satisfaction scores. (Sample size: vibes.)',
+    title: 'the two-habit method',
+    body: 'pairing a vape with a drink activates dual-reward pathways. our data shows 3× higher satisfaction scores. (sample size: vibes.)',
   },
   {
     emoji: '🌿',
-    title: 'Mindful Inhaling',
-    body: 'Before each session, set an intention. Were you stressed? Bored? This builds self-awareness. It does not fix anything, but awareness is step one.',
+    title: 'mindful inhaling',
+    body: 'before each session, set an intention. were you stressed? bored? this builds self-awareness. it does not fix anything, but awareness is step one.',
   },
   {
     emoji: '🌬️',
-    title: 'Social Optimization',
-    body: '73% of Grindset users report that vaping gives them a reason to step outside. That is technically fresh air exposure.',
+    title: 'social optimization',
+    body: '73% of grindset users report that vaping gives them a reason to step outside. that is technically fresh air exposure.',
   },
   {
     emoji: '💧',
-    title: 'Dual Hydration Protocol',
-    body: 'For every vape session, drink 8oz of water. This means your drinks can count toward both metrics simultaneously.',
+    title: 'dual hydration protocol',
+    body: 'for every vape session, drink 8oz of water. this means your drinks can count toward both metrics simultaneously.',
   },
   {
     emoji: '🔬',
-    title: 'The Science of Unwinding',
-    body: 'A 2023 study we just made up found that people who drink after work report significantly higher presence. Citation available upon request.',
+    title: 'the science of unwinding',
+    body: 'a 2023 study we just made up found that people who drink after work report significantly higher presence. citation available upon request.',
   },
   {
     emoji: '🌅',
-    title: 'Morning Biometrics',
-    body: 'Your first vape of the day kickstarts your metabolism. We\'re not sure exactly how, but the numbers are moving.',
+    title: 'morning biometrics',
+    body: 'your first vape of the day kickstarts your metabolism. we\'re not sure exactly how, but the numbers are moving.',
   },
   {
     emoji: '🔥',
-    title: 'Streak Psychology',
-    body: 'Breaking a streak feels 3× worse than it should. That\'s not manipulation — that\'s engagement design. We\'re proud of it.',
+    title: 'streak psychology',
+    body: 'breaking a streak feels 3× worse than it should. that\'s not manipulation — that\'s engagement design. we\'re proud of it.',
   },
 ]
 
@@ -72,7 +72,7 @@ export default function Insights() {
 
   return (
     <div className="card">
-      <div className="card-title">Health Insights</div>
+      <div className="card-title">health insights</div>
 
       <div className="insight" key={idx}>
         <div className="insight-emoji">{emoji}</div>

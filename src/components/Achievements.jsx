@@ -2,71 +2,71 @@ const ACHIEVEMENTS = [
   {
     id: 'first-vape',
     icon: '💨',
-    name: 'First Inhale',
-    desc: 'Log your very first vape session.',
+    name: 'first inhale',
+    desc: 'log your very first vape session.',
     check: ({ totalVapes }) => totalVapes >= 1,
   },
   {
     id: 'two-fisted',
     icon: '⚔️',
-    name: 'Two-Fisted Warrior',
-    desc: 'Log a vape and a drink on the same day.',
+    name: 'two-fisted warrior',
+    desc: 'log a vape and a drink on the same day.',
     check: ({ todayVapes, todayDrinks }) => todayVapes > 0 && todayDrinks > 0,
   },
   {
     id: 'cloud-chaser',
     icon: '☁️',
-    name: 'Cloud Chaser',
-    desc: 'Log 10 vape sessions in a single day.',
+    name: 'cloud chaser',
+    desc: 'log 10 vape sessions in a single day.',
     check: ({ todayVapes }) => todayVapes >= 10,
   },
   {
     id: 'open-bar',
     icon: '🍸',
-    name: 'Open Bar',
-    desc: 'Log 5 drinks in a single day.',
+    name: 'open bar',
+    desc: 'log 5 drinks in a single day.',
     check: ({ todayDrinks }) => todayDrinks >= 5,
   },
   {
     id: 'consistency',
     icon: '👑',
-    name: 'Consistency King',
-    desc: 'Maintain a 3-day streak.',
+    name: 'consistency king',
+    desc: 'maintain a 3-day streak.',
     check: ({ streak }) => streak >= 3,
   },
   {
     id: 'devoted',
     icon: '🏆',
-    name: 'Devoted Practitioner',
-    desc: 'Maintain a 7-day streak.',
+    name: 'devoted practitioner',
+    desc: 'maintain a 7-day streak.',
     check: ({ streak }) => streak >= 7,
   },
   {
     id: 'quantified',
     icon: '📱',
-    name: 'Quantified Self',
-    desc: 'Log 5+ vapes and 5+ drinks total.',
+    name: 'quantified self',
+    desc: 'log 5+ vapes and 5+ drinks total.',
     check: ({ totalVapes, totalDrinks }) => totalVapes >= 5 && totalDrinks >= 5,
   },
   {
     id: 'centurion',
     icon: '💯',
-    name: 'Centurion',
-    desc: 'Log 100 total vape sessions.',
+    name: 'centurion',
+    desc: 'log 100 total vape sessions.',
     check: ({ totalVapes }) => totalVapes >= 100,
   },
   {
     id: 'sommelier',
     icon: '🍷',
-    name: 'Amateur Sommelier',
-    desc: 'Log 50 total drinks.',
+    name: 'amateur sommelier',
+    desc: 'log 50 total drinks.',
     check: ({ totalDrinks }) => totalDrinks >= 50,
   },
   {
     id: 'wellness-zero',
     icon: '🫀',
-    name: 'Zero Wellness',
-    desc: 'Bring your Wellness Score™ to 0.',
+    name: 'zero wellness',
+    desc: 'bring your Wellness Score™ to 0.',
     check: ({ todayVapes, todayDrinks }) => (100 - todayVapes * 4 - todayDrinks * 3) <= 0,
   },
 ]
@@ -85,7 +85,7 @@ export default function Achievements({ todayVapes, todayDrinks, streak, totalVap
 
       {earned.length === 0 && (
         <p className="achievement-empty">
-          Start logging to unlock achievements.<br />Your potential is completely untapped.
+          start logging to unlock achievements.<br />your potential is completely untapped.
         </p>
       )}
 
@@ -106,7 +106,7 @@ export default function Achievements({ todayVapes, todayDrinks, streak, totalVap
 
       {locked.length > 0 && (
         <>
-          <div className="achievement-divider">Locked</div>
+          <div className="achievement-divider">locked</div>
           <div className="achievement-list">
             {locked.slice(0, 4).map(a => (
               <div key={a.id} className="achievement achievement--locked">

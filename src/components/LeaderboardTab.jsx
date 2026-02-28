@@ -1,16 +1,16 @@
 const MOCK_USERS = [
-  { name: 'CloudFactory_Chad',    emoji: '☁️',  vapes: 1203, drinks: 89,  xp: 14250 },
-  { name: 'BarStool_Brendan',     emoji: '🍺',  vapes: 234,  drinks: 847, xp: 13920 },
-  { name: 'TwoFisted_Terry',      emoji: '⚔️',  vapes: 567,  drinks: 523, xp: 13590 },
-  { name: 'Morning_Mitchell',     emoji: '🌅',  vapes: 890,  drinks: 312, xp: 11540 },
-  { name: 'Consistent_Carla',     emoji: '🔥',  vapes: 445,  drinks: 445, xp: 10675 },
-  { name: 'SocialButterfly_Sam',  emoji: '🦋',  vapes: 123,  drinks: 623, xp: 10575 },
-  { name: 'NightOwl_Nick',        emoji: '🦉',  vapes: 356,  drinks: 567, xp: 9885  },
-  { name: 'WFH_Wendy',            emoji: '💻',  vapes: 789,  drinks: 234, xp: 8910  },
-  { name: 'HappyHour_Hank',       emoji: '🕔',  vapes: 67,   drinks: 756, xp: 8545  },
-  { name: 'QuietType_Quinn',      emoji: '🤫',  vapes: 234,  drinks: 345, xp: 5535  },
-  { name: 'WeekendsOnly_Walt',    emoji: '📅',  vapes: 45,   drinks: 189, xp: 3225  },
-  { name: 'JustStarted_Jesse',    emoji: '👶',  vapes: 12,   drinks: 23,  xp: 585   },
+  { name: 'Dmitri',   emoji: '☁️',  vapes: 1203, drinks: 89,  xp: 14250 },
+  { name: 'Priya',    emoji: '🍺',  vapes: 234,  drinks: 847, xp: 13920 },
+  { name: 'Marcus',   emoji: '⚔️',  vapes: 567,  drinks: 523, xp: 13590 },
+  { name: 'Yuki',     emoji: '🌅',  vapes: 890,  drinks: 312, xp: 11540 },
+  { name: 'Fatima',   emoji: '🔥',  vapes: 445,  drinks: 445, xp: 10675 },
+  { name: 'Carlos',   emoji: '🦋',  vapes: 123,  drinks: 623, xp: 10575 },
+  { name: 'Siobhan',  emoji: '🦉',  vapes: 356,  drinks: 567, xp: 9885  },
+  { name: 'Kwame',    emoji: '💻',  vapes: 789,  drinks: 234, xp: 8910  },
+  { name: 'Ingrid',   emoji: '🕔',  vapes: 67,   drinks: 756, xp: 8545  },
+  { name: 'Tariq',    emoji: '🤫',  vapes: 234,  drinks: 345, xp: 5535  },
+  { name: 'Mei',      emoji: '📅',  vapes: 45,   drinks: 189, xp: 3225  },
+  { name: 'Bogdan',   emoji: '👶',  vapes: 12,   drinks: 23,  xp: 585   },
 ]
 
 const RANK_MEDALS = ['🥇', '🥈', '🥉']

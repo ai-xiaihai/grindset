@@ -4,6 +4,7 @@ import FeedTab from './components/FeedTab'
 import LeaderboardTab from './components/LeaderboardTab'
 import RecordTab from './components/RecordTab'
 import ProfileTab from './components/ProfileTab'
+import NudgeModal, { shouldShowNudge, randomFriend } from './components/NudgeModal'
 import './App.css'
 
 export function calcXP(entries, bacEntries, streakCount) {
@@ -28,6 +29,9 @@ export default function App() {
     catch { return { count: 0, lastDate: null } }
   })
   const [tab, setTab] = useState('feed')
+  const [nudge, setNudge] = useState(() =>
+    shouldShowNudge() ? randomFriend() : null
+  )
 
   useEffect(() => { localStorage.setItem('grindset-entries', JSON.stringify(entries)) }, [entries])
   useEffect(() => { localStorage.setItem('grindset-bac', JSON.stringify(bacEntries)) }, [bacEntries])
@@ -72,6 +76,7 @@ export default function App() {
       {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} />}
       {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} />}
       <BottomNav active={tab} onChange={setTab} />
+      {nudge && <NudgeModal friend={nudge} onDismiss={() => setNudge(null)} />}
     </div>
   )
 }

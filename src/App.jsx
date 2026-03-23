@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { supabase } from './lib/supabase'
+import AuthScreen from './components/AuthScreen'
 import BottomNav from './components/BottomNav'
 import FeedTab from './components/FeedTab'
 import LeaderboardTab from './components/LeaderboardTab'
@@ -16,7 +18,7 @@ export function calcXP(entries, bacEntries, streakCount) {
   return vaped + drank + bac + streakBonus
 }
 
-export default function App() {
+function AppInner() {
   const [entries, setEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem('grindset-entries') || '[]') }
     catch { return [] }
@@ -95,4 +97,18 @@ export default function App() {
       {nudge && <NudgeModal friend={nudge} onDismiss={() => setNudge(null)} />}
     </div>
   )
+}
+
+export default function App() {
+  const [session, setSession] = useState(undefined) // undefined = loading, null = logged out
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setSession(session))
+    return () => subscription.unsubscribe()
+  }, [])
+
+  if (session === undefined) return null
+  if (session === null) return <AuthScreen />
+  return <AppInner />
 }

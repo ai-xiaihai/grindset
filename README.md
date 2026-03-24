@@ -1,16 +1,38 @@
-# React + Vite
+# grindset
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A mobile-first lifestyle tracking app for logging vapes, drinks, and BAC — with a social feed, leaderboard, and friend nudges.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Feed** — social cards showing friends' night-out activity, BAC readings, and photos
+- **Log** — track vapes, drinks, and BAC entries with timestamps
+- **BAC Graph** — visualize blood alcohol over time
+- **Leaderboard** — ranked friend standings with peak BAC
+- **Record** — personal stats, streaks, achievements, and insights
+- **Shop** — in-app shop tab
+- **Auth** — email/password login and signup via Supabase
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 + Vite
+- Supabase (auth)
+- Recharts (BAC graph)
+- Deployed to GitHub Pages
 
-## Expanding the ESLint configuration
+## Local development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm install
+npm run dev
+```
+
+Create a `.env.local` file with your Supabase credentials:
+
+```
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+```
+
+## Deployment
+
+Deploys automatically to GitHub Pages on push to `master` via GitHub Actions. Requires `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` set as repository secrets.

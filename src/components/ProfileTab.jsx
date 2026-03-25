@@ -73,14 +73,14 @@ export default function ProfileTab({ stats, bacEntries, profile }) {
 
   return (
     <div className="prof-screen">
-      {/* ── Avatar + name ── */}
+      {/* ── Avatar + name + stats ── */}
       <div className="prof-hero">
-        <div className="prof-avatar">
-          <span>{(profile?.name ?? ME.name)[0]}</span>
+        <div className="prof-hero-left">
+          <div className="prof-avatar">
+            <span>{(profile?.name ?? ME.name)[0]}</span>
+          </div>
+          <h1 className="prof-name">{profile?.name ?? ME.name}</h1>
         </div>
-        <h1 className="prof-name">{profile?.name ?? ME.name}</h1>
-
-        {/* ── Stat pills ── */}
         <div className="prof-pills">
           <div className="prof-pill prof-pill--green">
             <span className="prof-pill-val">{(xp + ME.xp).toLocaleString()}</span>

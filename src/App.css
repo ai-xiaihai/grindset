@@ -1600,50 +1600,63 @@
 
 .prof-hero {
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 24px 20px;
+  background: #fff;
+  gap: 28px;
+}
+
+.prof-hero-left {
+  display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 24px 24px;
-  background: #fff;
+  gap: 10px;
+  min-width: 0;
 }
 
 .prof-avatar {
-  width: 96px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: linear-gradient(135deg, #58CC02, #1CB0F6);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: 22px;
   font-weight: 900;
   color: #fff;
   letter-spacing: -1px;
-  box-shadow: 0 6px 20px rgba(88,204,2,0.35);
-  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(88,204,2,0.35);
+  flex-shrink: 0;
 }
 
 .prof-name {
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 900;
   color: #1a1a1a;
-  margin: 0 0 20px;
+  margin: 0;
   letter-spacing: -0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .prof-pills {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .prof-pill {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 20px;
-  border-radius: 16px;
-  min-width: 80px;
+  padding: 8px 16px;
+  border-radius: 14px;
+  min-width: 72px;
 }
 
 .prof-pill--green  { background: #e9fcd4; }

@@ -52,7 +52,7 @@ function weekBacData(bacEntries) {
   })
 }
 
-export default function ProfileTab({ stats, bacEntries }) {
+export default function ProfileTab({ stats, bacEntries, profile }) {
   const { totalVapes, totalDrinks, streak, xp, totalBac, wellnessScore, todayVapes, todayDrinks } = stats
   const badgeStats = {
     totalVapes: totalVapes + ME.totalVapes,
@@ -76,9 +76,9 @@ export default function ProfileTab({ stats, bacEntries }) {
       {/* ── Avatar + name ── */}
       <div className="prof-hero">
         <div className="prof-avatar">
-          <span>{ME.name[0]}</span>
+          <span>{(profile?.name ?? ME.name)[0]}</span>
         </div>
-        <h1 className="prof-name">{ME.name}</h1>
+        <h1 className="prof-name">{profile?.name ?? ME.name}</h1>
 
         {/* ── Stat pills ── */}
         <div className="prof-pills">

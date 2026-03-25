@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
 import AuthScreen from './components/AuthScreen'
+import OnboardingScreen from './components/OnboardingScreen'
 import BottomNav from './components/BottomNav'
 import FeedTab from './components/FeedTab'
 import LeaderboardTab from './components/LeaderboardTab'
@@ -18,7 +19,7 @@ export function calcXP(entries, bacEntries, streakCount) {
   return vaped + drank + bac + streakBonus
 }
 
-function AppInner() {
+function AppInner({ profile }) {
   const [entries, setEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem('grindset-entries') || '[]') }
     catch { return [] }
@@ -91,7 +92,7 @@ function AppInner() {
       {tab === 'feed'        && <FeedTab entries={entries} bacEntries={bacEntries} stats={stats} />}
       {tab === 'leaderboard' && <LeaderboardTab stats={stats} />}
       {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} onNavigate={setTab} />}
-      {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} />}
+      {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} profile={profile} />}
       {tab === 'shop'        && <ShopTab />}
       <BottomNav active={tab} onChange={setTab} />
       {nudge && <NudgeModal friend={nudge} onDismiss={() => setNudge(null)} />}
@@ -101,6 +102,7 @@ function AppInner() {
 
 export default function App() {
   const [session, setSession] = useState(undefined) // undefined = loading, null = logged out
+  const [profile, setProfile] = useState(undefined) // undefined = loading, null = no profile yet
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setSession(session))
@@ -108,7 +110,18 @@ export default function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  if (session === undefined) return null
+  useEffect(() => {
+    if (!session) { setProfile(undefined); return }
+    supabase
+      .from('profiles')
+      .select('id, name')
+      .eq('id', session.user.id)
+      .maybeSingle()
+      .then(({ data }) => setProfile(data ?? null))
+  }, [session])
+
+  if (session === undefined || (session && profile === undefined)) return null
   if (session === null) return <AuthScreen />
-  return <AppInner />
+  if (profile === null) return <OnboardingScreen userId={session.user.id} onComplete={setProfile} />
+  return <AppInner profile={profile} />
 }

@@ -90,7 +90,7 @@ function AppInner({ profile }) {
   return (
     <div className="app">
       {tab === 'feed'        && <FeedTab entries={entries} bacEntries={bacEntries} stats={stats} />}
-      {tab === 'leaderboard' && <LeaderboardTab stats={stats} />}
+      {tab === 'leaderboard' && <LeaderboardTab stats={stats} profile={profile} />}
       {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} onNavigate={setTab} />}
       {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} profile={profile} />}
       {tab === 'shop'        && <ShopTab />}

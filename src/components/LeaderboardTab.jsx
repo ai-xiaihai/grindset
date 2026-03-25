@@ -5,9 +5,9 @@ const MOCK_USERS = FRIENDS
 
 const RANK_MEDALS = ['🥇', '🥈', '🥉']
 
-export default function LeaderboardTab({ stats }) {
+export default function LeaderboardTab({ stats, profile }) {
   const me = {
-    name: ME.name,
+    name: profile?.name ?? ME.name,
     emoji: ME.emoji,
     vapes: stats.totalVapes + ME.totalVapes,
     peakBac: ME.peakBac,

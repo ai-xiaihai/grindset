@@ -8,24 +8,25 @@ export default function FollowList({ userId, currentUserId, mode, onClose }) {
 
   useEffect(() => {
     const load = async () => {
-      let query
-      if (mode === 'followers') {
-        query = supabase
-          .from('follows')
-          .select('follower_id, profiles!follows_follower_id_fkey(id, name, email)')
-          .eq('following_id', userId)
-      } else {
-        query = supabase
-          .from('follows')
-          .select('following_id, profiles!follows_following_id_fkey(id, name, email)')
-          .eq('follower_id', userId)
-      }
+      const col = mode === 'followers' ? 'following_id' : 'follower_id'
+      const targetCol = mode === 'followers' ? 'follower_id' : 'following_id'
 
-      const { data } = await query
-      const list = (data || []).map(r =>
-        mode === 'followers' ? r.profiles : r.profiles
-      )
-      setUsers(list)
+      const { data: followRows } = await supabase
+        .from('follows')
+        .select(targetCol)
+        .eq(col, userId)
+
+      const ids = (followRows || []).map(r => r[targetCol])
+
+      if (ids.length > 0) {
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, name')
+          .in('id', ids)
+        setUsers(profiles || [])
+      } else {
+        setUsers([])
+      }
 
       const { data: myFollows } = await supabase
         .from('follows')
@@ -77,7 +78,6 @@ export default function FollowList({ userId, currentUserId, mode, onClose }) {
                   <div className="ff-avatar">{user.name[0]}</div>
                   <div className="ff-user-info">
                     <div className="ff-user-name">{user.name}</div>
-                    <div className="ff-user-email">{user.email}</div>
                   </div>
                 </div>
                 {!isMe && (

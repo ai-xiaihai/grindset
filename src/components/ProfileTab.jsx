@@ -189,6 +189,10 @@ export default function ProfileTab({ stats, bacEntries, profile, userId }) {
             )
           })}
         </div>
+
+        <button className="prof-signout-btn" onClick={() => supabase.auth.signOut()}>
+          sign out
+        </button>
       </div>
 
       {/* ── Follow overlays ── */}

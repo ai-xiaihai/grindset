@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import { supabase } from '../lib/supabase'
 import FRIENDS from '../data/friends.json'
 import ME from '../data/me.json'
 import firstInhaleImg from '../assets/badges/first-inhale.png'
 import twoFistedImg from '../assets/badges/two-fisted.png'
+import FindFriendsScreen from './FindFriendsScreen'
+import FollowList from './FollowList'
 
 // ── Duolingo palette ──────────────────────────────
 const DUO = {
@@ -52,7 +55,7 @@ function weekBacData(bacEntries) {
   })
 }
 
-export default function ProfileTab({ stats, bacEntries, profile }) {
+export default function ProfileTab({ stats, bacEntries, profile, userId }) {
   const { totalVapes, totalDrinks, streak, xp, totalBac, wellnessScore, todayVapes, todayDrinks } = stats
   const badgeStats = {
     totalVapes: totalVapes + ME.totalVapes,
@@ -62,6 +65,17 @@ export default function ProfileTab({ stats, bacEntries, profile }) {
     todayDrinks,
   }
   const [selectedBadge, setSelectedBadge] = useState(null)
+  const [showFindFriends, setShowFindFriends] = useState(false)
+  const [showFollowList, setShowFollowList] = useState(null)
+  const [followCounts, setFollowCounts] = useState({ followers: 0, following: 0 })
+
+  const loadCounts = () => {
+    supabase.rpc('get_follow_counts', { user_id: userId }).then(({ data }) => {
+      if (data) setFollowCounts(data)
+    })
+  }
+
+  useEffect(() => { loadCounts() }, [userId])
 
   const realData = weekBacData(bacEntries)
   const hasRealData = realData.some(d => d.bac !== null)
@@ -91,6 +105,21 @@ export default function ProfileTab({ stats, bacEntries, profile }) {
             <span className="prof-pill-label">{streakWeeks === 1 ? 'week' : 'weeks'}</span>
           </div>
         </div>
+      </div>
+
+      {/* ── Follow counts + find friends ── */}
+      <div className="prof-follow-bar">
+        <button className="prof-follow-stat" onClick={() => setShowFollowList('followers')}>
+          <span className="prof-follow-count">{followCounts.followers}</span>
+          <span className="prof-follow-label">followers</span>
+        </button>
+        <button className="prof-follow-stat" onClick={() => setShowFollowList('following')}>
+          <span className="prof-follow-count">{followCounts.following}</span>
+          <span className="prof-follow-label">following</span>
+        </button>
+        <button className="prof-find-btn" onClick={() => setShowFindFriends(true)}>
+          + find friends
+        </button>
       </div>
 
       <div className="prof-body">
@@ -161,6 +190,22 @@ export default function ProfileTab({ stats, bacEntries, profile }) {
           })}
         </div>
       </div>
+
+      {/* ── Follow overlays ── */}
+      {showFindFriends && (
+        <FindFriendsScreen
+          userId={userId}
+          onClose={() => { setShowFindFriends(false); loadCounts() }}
+        />
+      )}
+      {showFollowList && (
+        <FollowList
+          userId={userId}
+          currentUserId={userId}
+          mode={showFollowList}
+          onClose={() => { setShowFollowList(null); loadCounts() }}
+        />
+      )}
 
       {/* ── Badge detail modal ── */}
       {selectedBadge && (

@@ -19,7 +19,7 @@ export function calcXP(entries, bacEntries, streakCount) {
   return vaped + drank + bac + streakBonus
 }
 
-function AppInner({ profile }) {
+function AppInner({ profile, session }) {
   const [entries, setEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem('grindset-entries') || '[]') }
     catch { return [] }
@@ -92,7 +92,7 @@ function AppInner({ profile }) {
       {tab === 'feed'        && <FeedTab entries={entries} bacEntries={bacEntries} stats={stats} />}
       {tab === 'leaderboard' && <LeaderboardTab stats={stats} profile={profile} />}
       {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} onNavigate={setTab} />}
-      {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} profile={profile} />}
+      {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} profile={profile} userId={session.user.id} />}
       {tab === 'shop'        && <ShopTab />}
       <BottomNav active={tab} onChange={setTab} />
       {nudge && <NudgeModal friend={nudge} onDismiss={() => setNudge(null)} />}
@@ -123,5 +123,5 @@ export default function App() {
   if (session === undefined || (session && profile === undefined)) return null
   if (session === null) return <AuthScreen />
   if (profile === null) return <OnboardingScreen userId={session.user.id} onComplete={setProfile} />
-  return <AppInner profile={profile} />
+  return <AppInner profile={profile} session={session} />
 }

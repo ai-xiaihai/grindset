@@ -1,0 +1,25 @@
+{
+  "name": "anushula",
+  "color": "#58CC02",
+  "emoji": "🧢",
+  "xp": 8420,
+  "streakWeeks": 15,
+  "totalVapes": 500,
+  "totalDrinks": 83,
+  "totalBacCheckins": 18,
+  "peakBac": 0.11,
+  "post": {
+    "date": "feb 28 2026",
+    "maxBac": "0.08%",
+    "daps": 3
+  },
+  "weekBac": [
+    { "day": "sun", "bac": 0.042 },
+    { "day": "mon", "bac": 0.0 },
+    { "day": "tue", "bac": 0.078 },
+    { "day": "wed", "bac": 0.0 },
+    { "day": "thu", "bac": 0.091 },
+    { "day": "fri", "bac": 0.110 },
+    { "day": "sat", "bac": 0.084 }
+  ]
+}

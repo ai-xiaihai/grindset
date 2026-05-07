@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
+import { truncateName } from '../lib/utils'
 
 export default function FindFriendsScreen({ userId, onClose }) {
   const [query, setQuery] = useState('')
@@ -81,7 +82,7 @@ export default function FindFriendsScreen({ userId, onClose }) {
                 <div className="ff-row-left">
                   <div className="ff-avatar">{user.name[0]}</div>
                   <div className="ff-user-info">
-                    <div className="ff-user-name">{user.name}</div>
+                    <div className="ff-user-name">{truncateName(user.name)}</div>
                     <div className="ff-user-email">{user.email}</div>
                   </div>
                 </div>

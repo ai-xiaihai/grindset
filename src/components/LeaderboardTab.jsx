@@ -1,5 +1,6 @@
 import FRIENDS from '../data/friends.json'
 import ME from '../data/me.json'
+import { truncateName } from '../lib/utils'
 
 const MOCK_USERS = FRIENDS
 
@@ -57,7 +58,7 @@ export default function LeaderboardTab({ stats, profile }) {
               </span>
               <span className="lb-col-user">
                 <span className="lb-user-emoji">{user.emoji}</span>
-                <span className="lb-user-name">{user.name}{user.isMe ? ' (you)' : ''}</span>
+                <span className="lb-user-name">{truncateName(user.name)}{user.isMe ? ' (you)' : ''}</span>
               </span>
               <span className="lb-col-stat">{user.vapes.toLocaleString()}</span>
               <span className="lb-col-stat">{user.peakBac != null ? user.peakBac.toFixed(2) : '—'}</span>

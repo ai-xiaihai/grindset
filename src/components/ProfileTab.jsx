@@ -7,6 +7,7 @@ import firstInhaleImg from '../assets/badges/first-inhale.png'
 import twoFistedImg from '../assets/badges/two-fisted.png'
 import FindFriendsScreen from './FindFriendsScreen'
 import FollowList from './FollowList'
+import { truncateName } from '../lib/utils'
 
 // ── Duolingo palette ──────────────────────────────
 const DUO = {
@@ -91,9 +92,9 @@ export default function ProfileTab({ stats, bacEntries, profile, userId }) {
       <div className="prof-hero">
         <div className="prof-hero-left">
           <div className="prof-avatar">
-            <span>{(profile?.name ?? ME.name)[0]}</span>
+            <span>{(profile?.name ?? ME.name)[0].toUpperCase()}</span>
           </div>
-          <h1 className="prof-name">{profile?.name ?? ME.name}</h1>
+          <h1 className="prof-name">{truncateName(profile?.name ?? ME.name)}</h1>
         </div>
         <div className="prof-pills">
           <div className="prof-pill prof-pill--green">
@@ -153,7 +154,7 @@ export default function ProfileTab({ stats, bacEntries, profile, userId }) {
             <div key={f.id} className="prof-friend-row">
               <div className="prof-friend-left">
                 <div className="prof-friend-avatar">{f.emoji}</div>
-                <span className="prof-friend-name">{f.name}</span>
+                <span className="prof-friend-name">{truncateName(f.name)}</span>
               </div>
               <div className="prof-friend-streak">
                 <span className="prof-friend-weeks">{f.streakWeeks}</span>

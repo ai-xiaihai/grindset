@@ -2,7 +2,19 @@
   {
     "id": "michael", "name": "michael", "emoji": "🔥", "color": "#FF4B4B",
     "vapes": 445, "drinks": 312, "xp": 11540, "peakBac": 0.45,
-    "post": { "date": "mar 1 2026", "duration": "3h", "maxBac": "0.45%", "cigs": 1, "route": true, "daps": 4 }
+    "post": { "date": "mar 1 2026", "duration": "3h", "maxBac": "0.45%", "cigs": 1, "daps": 4, "route": [
+      { "latitude": 40.7282, "longitude": -73.9942 },
+      { "latitude": 40.7291, "longitude": -73.9930 },
+      { "latitude": 40.7305, "longitude": -73.9915 },
+      { "latitude": 40.7318, "longitude": -73.9902 },
+      { "latitude": 40.7310, "longitude": -73.9885 },
+      { "latitude": 40.7298, "longitude": -73.9870 },
+      { "latitude": 40.7285, "longitude": -73.9858 },
+      { "latitude": 40.7272, "longitude": -73.9872 },
+      { "latitude": 40.7260, "longitude": -73.9890 },
+      { "latitude": 40.7268, "longitude": -73.9910 },
+      { "latitude": 40.7280, "longitude": -73.9928 }
+    ] }
   },
   {
     "id": "katie", "name": "katie", "emoji": "⭐", "color": "#1CB0F6",

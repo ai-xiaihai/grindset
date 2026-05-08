@@ -4,6 +4,7 @@ import {
   TextInput, StyleSheet, KeyboardAvoidingView, Platform,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import MapView, { Polyline, PROVIDER_DEFAULT } from 'react-native-maps'
 import FRIENDS from '../data/friends.json'
 import { truncateName } from '../lib/utils'
 
@@ -15,13 +16,45 @@ const MOCK_POSTS = FRIENDS
   .filter(f => f.post)
   .map(f => ({ id: f.id, name: f.name.toLowerCase(), color: f.color, photo: FEED_PHOTOS[f.id] ?? null, ...f.post }))
 
-function RouteMap({ color }) {
+function centerOf(coords) {
+  const lat = coords.reduce((s, c) => s + c.latitude, 0) / coords.length
+  const lng = coords.reduce((s, c) => s + c.longitude, 0) / coords.length
+  const latDelta = Math.max(...coords.map(c => c.latitude)) - Math.min(...coords.map(c => c.latitude)) + 0.01
+  const lngDelta = Math.max(...coords.map(c => c.longitude)) - Math.min(...coords.map(c => c.longitude)) + 0.01
+  return { latitude: lat, longitude: lng, latitudeDelta: latDelta, longitudeDelta: lngDelta }
+}
+
+function RouteMap({ route, color }) {
+  if (Array.isArray(route) && route.length > 1) {
+    return (
+      <MapView
+        style={styles.mapContainer}
+        provider={PROVIDER_DEFAULT}
+        region={centerOf(route)}
+        scrollEnabled={false}
+        zoomEnabled={false}
+        pitchEnabled={false}
+        rotateEnabled={false}
+        customMapStyle={DARK_MAP_STYLE}
+      >
+        <Polyline coordinates={route} strokeColor={color} strokeWidth={3} />
+      </MapView>
+    )
+  }
   return (
     <View style={styles.mapContainer}>
       <Image source={eastVillageMap} style={styles.mapImage} resizeMode="cover" />
     </View>
   )
 }
+
+const DARK_MAP_STYLE = [
+  { elementType: 'geometry', stylers: [{ color: '#1e293b' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#64748b' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#0f172a' }] },
+  { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#334155' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0f172a' }] },
+]
 
 function NightOutCard({ post }) {
   const [daps, setDaps] = useState(post.daps)
@@ -64,7 +97,7 @@ function NightOutCard({ post }) {
       )}
 
       {/* Map */}
-      {post.route && <RouteMap color={post.color} />}
+      {post.route && <RouteMap route={post.route} color={post.color} />}
 
       {/* Stats */}
       <View style={styles.statsRow}>

@@ -4,6 +4,7 @@ import {
   TextInput, StyleSheet, KeyboardAvoidingView, Platform,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import * as Haptics from 'expo-haptics'
 import MapView, { Polyline, PROVIDER_DEFAULT } from 'react-native-maps'
 import FRIENDS from '../data/friends.json'
 import { truncateName } from '../lib/utils'
@@ -25,7 +26,7 @@ function centerOf(coords) {
 }
 
 function RouteMap({ route, color }) {
-  if (Array.isArray(route) && route.length > 1) {
+  if (Platform.OS !== 'web' && Array.isArray(route) && route.length > 1) {
     return (
       <MapView
         style={styles.mapContainer}
@@ -67,6 +68,7 @@ function NightOutCard({ post }) {
     if (daped) return
     setDaps(d => d + 1)
     setDaped(true)
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
   }
 
   const handleSend = () => {

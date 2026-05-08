@@ -5,6 +5,7 @@ import {
 } from 'react-native'
 import { CameraView, useCameraPermissions } from 'expo-camera'
 import * as ImagePicker from 'expo-image-picker'
+import * as Haptics from 'expo-haptics'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import 'react-native-get-random-values'
 import { v4 as uuidv4 } from 'uuid'
@@ -47,7 +48,7 @@ function DuoBtn({ label, color, shadow, onPress, size = 'md', outline = false })
 
   return (
     <Pressable
-      onPressIn={() => setPressed(true)}
+      onPressIn={() => { setPressed(true); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light) }}
       onPressOut={() => setPressed(false)}
       onPress={onPress}
       style={[
@@ -190,6 +191,11 @@ function AddBacScreen({ onBack, onPost, insets }) {
   }
 
   const handleOpenCamera = async () => {
+    if (Platform.OS === 'web') {
+      const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.8 })
+      if (!result.canceled) setGenericPhoto(result.assets[0].uri)
+      return
+    }
     if (!cameraPermission?.granted) {
       const { granted } = await requestCameraPermission()
       if (!granted) return

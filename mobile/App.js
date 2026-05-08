@@ -55,7 +55,7 @@ function MainTabs({ session, profile, stats, entries, bacEntries, onAddEntry, on
           {() => <LeaderboardScreen stats={stats} profile={profile} />}
         </Tab.Screen>
         <Tab.Screen name="Record">
-          {() => <RecordScreen onAddEntry={onAddEntry} onAddBac={onAddBac} />}
+          {() => <RecordScreen userId={session?.user?.id} onAddEntry={onAddEntry} onAddBac={onAddBac} />}
         </Tab.Screen>
         <Tab.Screen name="Shop" component={ShopScreen} />
         <Tab.Screen name="Profile">

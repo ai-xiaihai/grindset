@@ -1,11 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   View, Text, Pressable, TextInput, Image, ScrollView,
-  StyleSheet, KeyboardAvoidingView, Platform,
+  StyleSheet, KeyboardAvoidingView, Platform, Alert,
 } from 'react-native'
 import { CameraView, useCameraPermissions } from 'expo-camera'
 import * as ImagePicker from 'expo-image-picker'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import 'react-native-get-random-values'
+import { v4 as uuidv4 } from 'uuid'
+import {
+  requestLocationPermissions,
+  startLocationTracking,
+  stopLocationTracking,
+} from '../lib/location'
 
 const HEROES = [
   require('../assets/record/vape.png'),
@@ -303,7 +310,7 @@ function AddBacScreen({ onBack, onPost, insets }) {
 }
 
 // ── Main RecordScreen ─────────────────────────────
-export default function RecordScreen({ onAddEntry, onAddBac }) {
+export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
   const insets = useSafeAreaInsets()
   const [phase, setPhase] = useState('idle')
   const [elapsed, setElapsed] = useState(0)
@@ -311,6 +318,7 @@ export default function RecordScreen({ onAddEntry, onAddBac }) {
   const [cigCount, setCigCount] = useState(0)
   const returnPhaseRef = useRef('idle')
   const intervalRef = useRef(null)
+  const sessionIdRef = useRef(null)
 
   useEffect(() => {
     if (phase === 'running') {
@@ -343,19 +351,40 @@ export default function RecordScreen({ onAddEntry, onAddBac }) {
     }
   }
 
+  const handleStartNight = async () => {
+    sessionIdRef.current = uuidv4()
+    if (userId) {
+      const granted = await requestLocationPermissions()
+      if (granted) {
+        await startLocationTracking(sessionIdRef.current, userId)
+      } else {
+        Alert.alert('Location', 'Location permission denied — route won\'t be recorded.')
+      }
+    }
+    setPhase('running')
+  }
+
+  const handleEnd = async () => {
+    if (userId && sessionIdRef.current) {
+      await stopLocationTracking(sessionIdRef.current, userId)
+    }
+    setPhase('done')
+  }
+
   const handleDone = () => {
     setPhase('idle')
     setElapsed(0)
     setBacCount(0)
     setCigCount(0)
+    sessionIdRef.current = null
   }
 
   const shared = { insets }
 
   if (phase === 'addbac') return <AddBacScreen onBack={() => setPhase(returnPhaseRef.current)} onPost={handlePost} insets={insets} />
-  if (phase === 'idle')    return <IdleScreen onStartNight={() => setPhase('running')} onAddBac={() => goToAddBac('idle')} onAddCig={handleAddCig} {...shared} />
+  if (phase === 'idle')    return <IdleScreen onStartNight={handleStartNight} onAddBac={() => goToAddBac('idle')} onAddCig={handleAddCig} {...shared} />
   if (phase === 'running') return <RunningScreen elapsed={elapsed} bacCount={bacCount} cigCount={cigCount} onAddBac={() => goToAddBac('running')} onAddCig={handleAddCig} onPause={() => setPhase('paused')} {...shared} />
-  if (phase === 'paused')  return <PausedScreen elapsed={elapsed} bacCount={bacCount} cigCount={cigCount} onResume={() => setPhase('running')} onEnd={() => setPhase('done')} {...shared} />
+  if (phase === 'paused')  return <PausedScreen elapsed={elapsed} bacCount={bacCount} cigCount={cigCount} onResume={() => setPhase('running')} onEnd={handleEnd} {...shared} />
   return <DoneScreen elapsed={elapsed} bacCount={bacCount} cigCount={cigCount} xp={xpGained} onDone={handleDone} {...shared} />
 }
 

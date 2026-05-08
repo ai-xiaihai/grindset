@@ -36,3 +36,21 @@ VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
 ## Deployment
 
 Deploys automatically to GitHub Pages on push to `master` via GitHub Actions. Requires `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` set as repository secrets.
+
+---
+
+## Known gaps / needs retesting
+
+### Background location tracking (Phase 6)
+
+**Status: implemented but untested on device.**
+
+The code in `mobile/src/lib/location.js` and `mobile/src/screens/RecordScreen.jsx` is wired up — permissions request, background task registration via `expo-task-manager`, Haversine distance filtering, AsyncStorage buffering, and periodic sync to `night_out_locations` in Supabase.
+
+**Why it hasn't been tested:** Background location requires a [development build](https://docs.expo.dev/develop/development-builds/introduction/) — a custom native binary compiled with the app's actual native dependencies. The current dev workflow uses Expo Go, which is a pre-built sandbox that cannot load `expo-task-manager` or the `UIBackgroundModes: location` entitlement at runtime.
+
+**To test this properly:**
+1. Set up EAS (`npm install -g eas-cli && eas login && eas build:configure`)
+2. Build a development client: `eas build --profile development --platform android`
+3. Install the resulting `.apk` on the test device
+4. Verify: permission prompt appears on "start a night out", background task survives app backgrounding, points appear in `night_out_locations` after session ends

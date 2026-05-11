@@ -5,9 +5,7 @@ import OnboardingScreen from './components/OnboardingScreen'
 import BottomNav from './components/BottomNav'
 import FeedTab from './components/FeedTab'
 import LeaderboardTab from './components/LeaderboardTab'
-import RecordTab from './components/RecordTab'
 import ProfileTab from './components/ProfileTab'
-import ShopTab from './components/ShopTab'
 import NudgeModal, { shouldShowNudge, randomFriend } from './components/NudgeModal'
 import './App.css'
 
@@ -89,12 +87,12 @@ function AppInner({ profile, session }) {
 
   return (
     <div className="app">
-      {tab === 'feed'        && <FeedTab entries={entries} bacEntries={bacEntries} stats={stats} />}
-      {tab === 'leaderboard' && <LeaderboardTab stats={stats} profile={profile} />}
-      {tab === 'record'      && <RecordTab onAddEntry={addEntry} onAddBac={addBac} onNavigate={setTab} />}
-      {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} profile={profile} userId={session.user.id} />}
-      {tab === 'shop'        && <ShopTab />}
       <BottomNav active={tab} onChange={setTab} />
+      <main className="app-main">
+        {tab === 'feed'        && <FeedTab entries={entries} bacEntries={bacEntries} stats={stats} />}
+        {tab === 'leaderboard' && <LeaderboardTab stats={stats} profile={profile} />}
+        {tab === 'profile'     && <ProfileTab stats={stats} entries={entries} bacEntries={bacEntries} profile={profile} userId={session.user.id} />}
+      </main>
       {nudge && <NudgeModal friend={nudge} onDismiss={() => setNudge(null)} />}
     </div>
   )

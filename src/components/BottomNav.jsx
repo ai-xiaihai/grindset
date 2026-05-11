@@ -22,28 +22,6 @@ const TABS = [
     ),
   },
   {
-    id: 'record',
-    label: 'record',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-        <circle cx="12" cy="12" r="9" />
-        <line x1="12" y1="8" x2="12" y2="16" />
-        <line x1="8" y1="12" x2="16" y2="12" />
-      </svg>
-    ),
-  },
-  {
-    id: 'shop',
-    label: 'shop',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-        <line x1="3" y1="6" x2="21" y2="6" />
-        <path d="M16 10a4 4 0 01-8 0" />
-      </svg>
-    ),
-  },
-  {
     id: 'profile',
     label: 'profile',
     icon: (
@@ -58,6 +36,7 @@ const TABS = [
 export default function BottomNav({ active, onChange }) {
   return (
     <nav className="bottom-nav">
+      <div className="nav-logo">grindset</div>
       {TABS.map(t => (
         <button
           key={t.id}

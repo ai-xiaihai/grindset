@@ -132,6 +132,12 @@
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   text-transform: lowercase;
+  display: flex;
+}
+
+.app-main {
+  flex: 1;
+  min-width: 0;
 }
 
 .tab-screen {
@@ -185,7 +191,9 @@
   font-weight: 500;
 }
 
-/* ─── Bottom Nav ────────────────────────────────── */
+/* ─── Nav (bottom on mobile, sidebar on desktop) ── */
+.nav-logo { display: none; }
+
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -230,6 +238,58 @@
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.01em;
+}
+
+@media (min-width: 900px) {
+  .bottom-nav {
+    position: sticky;
+    top: 0;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 220px;
+    height: 100dvh;
+    flex-direction: column;
+    align-items: stretch;
+    border-top: none;
+    border-right: 1px solid var(--border);
+    box-shadow: none;
+    padding-bottom: 0;
+    padding-top: 0;
+    flex-shrink: 0;
+  }
+
+  .nav-logo {
+    display: block;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    color: var(--teal);
+    padding: 28px 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-tab {
+    flex: unset;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 0;
+    font-size: 15px;
+  }
+
+  .nav-tab-label {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .nav-tab--active {
+    background: var(--teal-bg);
+    color: var(--teal);
+    border-right: 3px solid var(--teal);
+  }
 }
 
 /* ─── Card ──────────────────────────────────────── */
@@ -1147,19 +1207,73 @@
   }
 
   .page-header { padding: 16px 24px; }
-
-  .bottom-nav {
-    max-width: 480px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 20px 20px 0 0;
-    border: 1px solid var(--border);
-    border-bottom: none;
-  }
 }
 
 @media (min-width: 900px) {
-  .tab-body { max-width: 860px; }
+  .tab-screen {
+    padding-bottom: 0;
+  }
+
+  .tab-body {
+    max-width: 760px;
+    padding: 32px;
+  }
+
+  .feed-screen {
+    padding-bottom: 0;
+  }
+
+  .feed-body {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 24px 0;
+  }
+
+  .page-header {
+    background: transparent;
+    position: static;
+    padding: 32px 32px 0;
+  }
+
+  .page-header-logo {
+    font-size: 32px;
+  }
+
+  /* Profile two-column */
+  .prof-screen {
+    padding-bottom: 0;
+  }
+
+  .prof-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    min-height: 100dvh;
+  }
+
+  .prof-layout-left {
+    border-right: 1px solid var(--border);
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .prof-layout-right {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+  }
+
+  /* Feed cards wider */
+  .feed-card-name { font-size: 20px; }
+  .feed-stat-val  { font-size: 22px; }
 }
 
 /* ─── Nudge Modal ────────────────────────────────── */

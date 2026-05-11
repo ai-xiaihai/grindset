@@ -86,8 +86,8 @@ export default function ProfileTab({ stats, bacEntries, profile, userId }) {
 
   const streakWeeks = Math.max(1, Math.round(streak / 7)) + ME.streakWeeks
 
-  return (
-    <div className="prof-screen">
+  const leftPanel = (
+    <>
       {/* ── Avatar + name + stats ── */}
       <div className="prof-hero">
         <div className="prof-hero-left">
@@ -123,77 +123,88 @@ export default function ProfileTab({ stats, bacEntries, profile, userId }) {
         </button>
       </div>
 
-      <div className="prof-body">
-        {/* ── This week's BAC ── */}
-        <div className="prof-section-title">this week's bac</div>
-        <div className="prof-bac-card">
-          <ResponsiveContainer width="100%" height={160}>
-            <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-              <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} domain={[0, 'auto']} />
-              <Tooltip
-                contentStyle={{ borderRadius: 10, border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', fontSize: 12 }}
-                formatter={v => [`${v} g/dL`, 'BAC']}
-              />
-              <Line
-                type="monotone"
-                dataKey="bac"
-                stroke={DUO.blue}
-                strokeWidth={3}
-                dot={{ fill: DUO.blue, r: 4, strokeWidth: 0 }}
-                connectNulls
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* ── Friend streaks ── */}
-        <div className="prof-section-title">friend streaks</div>
-        <div className="prof-friends-card">
-          {STREAK_FRIENDS.map(f => (
-            <div key={f.id} className="prof-friend-row">
-              <div className="prof-friend-left">
-                <div className="prof-friend-avatar">{f.emoji}</div>
-                <span className="prof-friend-name">{truncateName(f.name)}</span>
-              </div>
-              <div className="prof-friend-streak">
-                <span className="prof-friend-weeks">{f.streakWeeks}</span>
-                <span className="prof-friend-wlabel"> {f.streakWeeks === 1 ? 'week' : 'weeks'}</span>
-                <span className="prof-friend-fire"> 🔥</span>
-              </div>
+      {/* ── Friend streaks ── */}
+      <div className="prof-section-title">friend streaks</div>
+      <div className="prof-friends-card">
+        {STREAK_FRIENDS.map(f => (
+          <div key={f.id} className="prof-friend-row">
+            <div className="prof-friend-left">
+              <div className="prof-friend-avatar">{f.emoji}</div>
+              <span className="prof-friend-name">{truncateName(f.name)}</span>
             </div>
-          ))}
-        </div>
+            <div className="prof-friend-streak">
+              <span className="prof-friend-weeks">{f.streakWeeks}</span>
+              <span className="prof-friend-wlabel"> {f.streakWeeks === 1 ? 'week' : 'weeks'}</span>
+              <span className="prof-friend-fire"> 🔥</span>
+            </div>
+          </div>
+        ))}
+      </div>
 
-        {/* ── Badges ── */}
-        <div className="prof-section-title">badges</div>
-        <div className="prof-badges-grid">
-          {BADGES.map(b => {
-            const earned = b.img || b.check(badgeStats)
-            return (
+      <button className="prof-signout-btn" onClick={() => supabase.auth.signOut()}>
+        sign out
+      </button>
+    </>
+  )
+
+  const rightPanel = (
+    <>
+      {/* ── This week's BAC ── */}
+      <div className="prof-section-title">this week's bac</div>
+      <div className="prof-bac-card">
+        <ResponsiveContainer width="100%" height={160}>
+          <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+            <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 10, fill: '#94a3b8' }} axisLine={false} tickLine={false} domain={[0, 'auto']} />
+            <Tooltip
+              contentStyle={{ borderRadius: 10, border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', fontSize: 12 }}
+              formatter={v => [`${v} g/dL`, 'BAC']}
+            />
+            <Line
+              type="monotone"
+              dataKey="bac"
+              stroke={DUO.blue}
+              strokeWidth={3}
+              dot={{ fill: DUO.blue, r: 4, strokeWidth: 0 }}
+              connectNulls
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* ── Badges ── */}
+      <div className="prof-section-title">badges</div>
+      <div className="prof-badges-grid">
+        {BADGES.map(b => {
+          const earned = b.img || b.check(badgeStats)
+          return (
+            <div
+              key={b.id}
+              className={`prof-badge${earned ? ' prof-badge--earned' : ''}`}
+              onClick={() => setSelectedBadge({ ...b, earned })}
+            >
               <div
-                key={b.id}
-                className={`prof-badge${earned ? ' prof-badge--earned' : ''}`}
-                onClick={() => setSelectedBadge({ ...b, earned })}
+                className="prof-badge-circle"
+                style={earned && !b.img ? { background: b.color, boxShadow: `0 4px 12px ${b.color}55` } : {}}
               >
-                <div
-                  className="prof-badge-circle"
-                  style={earned && !b.img ? { background: b.color, boxShadow: `0 4px 12px ${b.color}55` } : {}}
-                >
-                  {b.img
-                    ? <img src={b.img} alt={b.name} className="prof-badge-img" />
-                    : <span>{earned ? b.icon : '🔒'}</span>
-                  }
-                </div>
-                <span className="prof-badge-name">{b.name.toLowerCase()}</span>
+                {b.img
+                  ? <img src={b.img} alt={b.name} className="prof-badge-img" />
+                  : <span>{earned ? b.icon : '🔒'}</span>
+                }
               </div>
-            )
-          })}
-        </div>
+              <span className="prof-badge-name">{b.name.toLowerCase()}</span>
+            </div>
+          )
+        })}
+      </div>
+    </>
+  )
 
-        <button className="prof-signout-btn" onClick={() => supabase.auth.signOut()}>
-          sign out
-        </button>
+  return (
+    <div className="prof-screen">
+      <div className="prof-layout">
+        <div className="prof-layout-left">{leftPanel}</div>
+        <div className="prof-layout-right">{rightPanel}</div>
       </div>
 
       {/* ── Follow overlays ── */}

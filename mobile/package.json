@@ -34,5 +34,6 @@
     "react-native-svg": "15.12.1",
     "uuid": "^14.0.0"
   },
-  "private": true
+  "private": true,
+  "license": "MIT"
 }

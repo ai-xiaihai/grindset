@@ -369,7 +369,14 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
           'To record your route while the app is backgrounded, set location access to "Allow all the time" in Settings.',
           [
             { text: 'Not now', style: 'cancel' },
-            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+            {
+              text: 'Open Settings',
+              onPress: () => {
+                Linking.openSettings().catch(() =>
+                  Alert.alert('Location', "Couldn't open Settings — please open it manually to allow background location.")
+                )
+              },
+            },
           ]
         )
       } else {

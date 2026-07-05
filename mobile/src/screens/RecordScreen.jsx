@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   View, Text, Pressable, TextInput, Image, ScrollView,
-  StyleSheet, KeyboardAvoidingView, Platform, Alert,
+  StyleSheet, KeyboardAvoidingView, Platform, Alert, Linking,
 } from 'react-native'
 import { CameraView, useCameraPermissions } from 'expo-camera'
 import * as ImagePicker from 'expo-image-picker'
@@ -360,9 +360,18 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
   const handleStartNight = async () => {
     sessionIdRef.current = uuidv4()
     if (userId) {
-      const granted = await requestLocationPermissions()
-      if (granted) {
+      const result = await requestLocationPermissions()
+      if (result.granted) {
         await startLocationTracking(sessionIdRef.current, userId)
+      } else if (result.reason === 'background_denied') {
+        Alert.alert(
+          'Background Location Needed',
+          'To record your route while the app is backgrounded, set location access to "Allow all the time" in Settings.',
+          [
+            { text: 'Not now', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ]
+        )
       } else {
         Alert.alert('Location', 'Location permission denied — route won\'t be recorded.')
       }

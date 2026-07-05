@@ -80,9 +80,11 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
 
 export async function requestLocationPermissions() {
   const { status: fg } = await Location.requestForegroundPermissionsAsync()
-  if (fg !== 'granted') return false
+  if (fg !== 'granted') return { granted: false, reason: 'foreground_denied' }
+
   const { status: bg } = await Location.requestBackgroundPermissionsAsync()
-  return bg === 'granted'
+  if (bg === 'granted') return { granted: true }
+  return { granted: false, reason: 'background_denied' }
 }
 
 export async function startLocationTracking(sessionId, userId) {

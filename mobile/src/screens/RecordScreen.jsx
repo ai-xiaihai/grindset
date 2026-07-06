@@ -359,26 +359,31 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
 
   const handleStartNight = async () => {
     sessionIdRef.current = uuidv4()
+    console.log('[record] starting night out, userId:', userId, 'sessionId:', sessionIdRef.current)
+    if (!userId) console.warn('[record] no userId — location tracking will not start')
     if (userId) {
-      const result = await requestLocationPermissions()
-      if (result.granted) {
+      const { foreground, background } = await requestLocationPermissions()
+      console.log('[record] location permission result:', { foreground, background })
+      if (foreground) {
         await startLocationTracking(sessionIdRef.current, userId)
-      } else if (result.reason === 'background_denied') {
-        Alert.alert(
-          'Background Location Needed',
-          'To record your route while the app is backgrounded, set location access to "Allow all the time" in Settings.',
-          [
-            { text: 'Not now', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => {
-                Linking.openSettings().catch(() =>
-                  Alert.alert('Location', "Couldn't open Settings — please open it manually to allow background location.")
-                )
+        console.log('[record] location tracking started')
+        if (!background) {
+          Alert.alert(
+            'Background Location Needed',
+            'Your route is recording, but to keep tracking while the app is backgrounded, set location access to "Allow all the time" in Settings.',
+            [
+              { text: 'Not now', style: 'cancel' },
+              {
+                text: 'Open Settings',
+                onPress: () => {
+                  Linking.openSettings().catch(() =>
+                    Alert.alert('Location', "Couldn't open Settings — please open it manually to allow background location.")
+                  )
+                },
               },
-            },
-          ]
-        )
+            ]
+          )
+        }
       } else {
         Alert.alert('Location', 'Location permission denied — route won\'t be recorded.')
       }
@@ -388,6 +393,7 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
 
   const handleEnd = async () => {
     if (userId && sessionIdRef.current) {
+      console.log('[record] ending night out, stopping location tracking and syncing')
       await stopLocationTracking(sessionIdRef.current, userId)
     }
     setPhase('done')

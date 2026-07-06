@@ -6,7 +6,7 @@ import { supabase } from './supabase'
 export const LOCATION_TASK = 'BACKGROUND_LOCATION_TASK'
 
 const STORAGE_KEY = 'night_out_points'
-const MIN_DISTANCE_M = 100
+const MIN_DISTANCE_M = 20
 const SYNC_INTERVAL_MS = 5 * 60 * 1000
 
 function haversineMeters(lat1, lon1, lat2, lon2) {
@@ -47,19 +47,33 @@ async function syncToSupabase(sessionId, userId) {
   }))
 
   const { error } = await supabase.from('night_out_locations').insert(rows)
-  if (!error) {
-    const synced = points.map(p => ({ ...p, synced: true }))
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(synced))
+  if (error) {
+    console.error('[location] failed to sync points to supabase:', error)
+    return
   }
+  console.log(`[location] synced ${rows.length} point(s) to supabase`)
+  const synced = points.map(p => ({ ...p, synced: true }))
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(synced))
 }
 
 // Called by the background task
 TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
-  if (error || !data) return
+  if (error) {
+    console.error('[location] background task error:', error)
+    return
+  }
+  if (!data) {
+    console.log('[location] task fired with no data')
+    return
+  }
   const { locations } = data
+  console.log(`[location] task fired with ${locations.length} location(s)`)
 
   const meta = await AsyncStorage.getItem('night_out_meta')
-  if (!meta) return
+  if (!meta) {
+    console.log('[location] no active session meta, skipping')
+    return
+  }
   const { sessionId, userId } = JSON.parse(meta)
 
   const stored = await getStoredPoints()
@@ -67,8 +81,12 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
 
   for (const loc of locations) {
     const { latitude, longitude } = loc.coords
-    if (last && haversineMeters(last.latitude, last.longitude, latitude, longitude) < MIN_DISTANCE_M) continue
+    if (last && haversineMeters(last.latitude, last.longitude, latitude, longitude) < MIN_DISTANCE_M) {
+      console.log('[location] point too close to last, skipping')
+      continue
+    }
     await appendPoint({ latitude, longitude, recorded_at: new Date().toISOString(), synced: false })
+    console.log(`[location] appended point ${latitude}, ${longitude}`)
   }
 
   const lastSync = await AsyncStorage.getItem('night_out_last_sync')
@@ -80,17 +98,25 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
 
 export async function requestLocationPermissions() {
   const { status: fg } = await Location.requestForegroundPermissionsAsync()
-  if (fg !== 'granted') return { granted: false, reason: 'foreground_denied' }
+  if (fg !== 'granted') return { foreground: false, background: false }
 
   const { status: bg } = await Location.requestBackgroundPermissionsAsync()
-  if (bg === 'granted') return { granted: true }
-  return { granted: false, reason: 'background_denied' }
+  return { foreground: true, background: bg === 'granted' }
 }
 
 export async function startLocationTracking(sessionId, userId) {
   await AsyncStorage.setItem('night_out_meta', JSON.stringify({ sessionId, userId }))
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([]))
   await AsyncStorage.setItem('night_out_last_sync', String(Date.now()))
+
+  const initial = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
+  await appendPoint({
+    latitude: initial.coords.latitude,
+    longitude: initial.coords.longitude,
+    recorded_at: new Date().toISOString(),
+    synced: false,
+  })
+  console.log(`[location] captured initial fix ${initial.coords.latitude}, ${initial.coords.longitude}`)
 
   await Location.startLocationUpdatesAsync(LOCATION_TASK, {
     accuracy: Location.Accuracy.Balanced,

@@ -137,19 +137,4 @@ export async function stopLocationTracking(sessionId, userId) {
   await AsyncStorage.removeItem('night_out_last_sync')
 }
 
-export async function saveNightOutSession({ sessionId, userId, durationSeconds, cigCount, maxBac }) {
-  const { error } = await supabase.from('night_out_sessions').insert({
-    id: sessionId,
-    user_id: userId,
-    duration_seconds: durationSeconds,
-    cig_count: cigCount,
-    max_bac: maxBac,
-  })
-  if (error) {
-    console.error('[location] failed to save night out session:', error)
-    return
-  }
-  console.log('[location] saved night out session', sessionId)
-}
-
 export { getStoredPoints }

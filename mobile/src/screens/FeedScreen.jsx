@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
   View, Text, FlatList, Image, Pressable,
   TextInput, StyleSheet, KeyboardAvoidingView, Platform,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useFocusEffect } from '@react-navigation/native'
 import * as Haptics from 'expo-haptics'
 import MapView, { Polyline, PROVIDER_DEFAULT } from 'react-native-maps'
 import FRIENDS from '../data/friends.json'
-import { truncateName } from '../lib/utils'
+import { truncateName, fmtDuration, fmtFeedDate } from '../lib/utils'
+import { supabase } from '../lib/supabase'
 
 const eastVillageMap = require('../assets/maps/east-village.png')
 const frankNight = require('../assets/feed/frank-night.jpg')
@@ -171,26 +173,71 @@ function NightOutCard({ post }) {
   )
 }
 
-export default function FeedScreen({ stats, bacEntries }) {
+async function fetchMyNightOuts(userId) {
+  const [{ data: locations, error: locErr }, { data: sessions, error: sessErr }] = await Promise.all([
+    supabase
+      .from('night_out_locations')
+      .select('session_id, latitude, longitude, recorded_at')
+      .eq('user_id', userId)
+      .order('recorded_at', { ascending: true }),
+    supabase
+      .from('night_out_sessions')
+      .select('id, duration_seconds, cig_count, max_bac, created_at')
+      .eq('user_id', userId),
+  ])
+  if (locErr) console.error('[feed] failed to load locations:', locErr)
+  if (sessErr) console.error('[feed] failed to load sessions:', sessErr)
+
+  const pointsBySession = new Map()
+  for (const loc of locations ?? []) {
+    if (!pointsBySession.has(loc.session_id)) pointsBySession.set(loc.session_id, [])
+    pointsBySession.get(loc.session_id).push(loc)
+  }
+  const sessionById = new Map((sessions ?? []).map(s => [s.id, s]))
+
+  return [...pointsBySession.entries()]
+    .map(([sessionId, points]) => {
+      const meta = sessionById.get(sessionId)
+      const first = points[0]
+      const last = points[points.length - 1]
+      const startedAt = new Date(meta?.created_at ?? first.recorded_at)
+      const durationSeconds = meta?.duration_seconds
+        ?? Math.round((new Date(last.recorded_at) - new Date(first.recorded_at)) / 1000)
+
+      return {
+        id: sessionId,
+        name: 'alex',
+        photo: null,
+        startedAt,
+        date: fmtFeedDate(startedAt),
+        duration: fmtDuration(durationSeconds),
+        maxBac: meta?.max_bac != null ? `${meta.max_bac.toFixed(2)}%` : null,
+        bacLabel: 'bac',
+        cigs: meta?.cig_count > 0 ? meta.cig_count : null,
+        route: points.length > 1 ? points.map(p => ({ latitude: p.latitude, longitude: p.longitude })) : null,
+        color: '#58CC02',
+        daps: 0,
+      }
+    })
+    .sort((a, b) => b.startedAt - a.startedAt)
+}
+
+export default function FeedScreen({ userId }) {
   const insets = useSafeAreaInsets()
-  const today = new Date()
-  const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toLowerCase()
+  const [myPosts, setMyPosts] = useState([])
 
-  const hasActivity = (stats?.totalVapes ?? 0) > 0 || (stats?.totalDrinks ?? 0) > 0 || (stats?.totalBac ?? 0) > 0
-  const myPost = hasActivity ? {
-    id: 'me',
-    name: 'alex',
-    date: dateStr,
-    duration: null,
-    maxBac: bacEntries?.length > 0 ? `${Math.max(...bacEntries.map(e => e.bac)).toFixed(2)}%` : '0.08%',
-    bacLabel: 'bac',
-    cigs: null,
-    route: null,
-    color: '#58CC02',
-    daps: 3,
-  } : null
+  useFocusEffect(
+    useCallback(() => {
+      if (!userId) return
+      let cancelled = false
+      fetchMyNightOuts(userId).then(posts => {
+        if (!cancelled) setMyPosts(posts)
+      })
+      return () => { cancelled = true }
+    }, [userId])
+  )
 
-  const allPosts = myPost ? [MOCK_POSTS[0], myPost, ...MOCK_POSTS.slice(1)] : MOCK_POSTS
+  const allPosts = [...myPosts, ...MOCK_POSTS]
 
   return (
     <KeyboardAvoidingView

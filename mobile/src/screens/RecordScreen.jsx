@@ -13,6 +13,7 @@ import {
   requestLocationPermissions,
   startLocationTracking,
   stopLocationTracking,
+  saveNightOutSession,
 } from '../lib/location'
 
 const HEROES = [
@@ -325,6 +326,7 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
   const returnPhaseRef = useRef('idle')
   const intervalRef = useRef(null)
   const sessionIdRef = useRef(null)
+  const sessionBacsRef = useRef([])
 
   useEffect(() => {
     if (phase === 'running') {
@@ -350,6 +352,7 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
   const handlePost = (bac, breathPhoto, comment, socialPhoto, genericPhoto) => {
     onAddBac?.(bac, breathPhoto, comment, socialPhoto, genericPhoto)
     if (returnPhaseRef.current === 'running') {
+      sessionBacsRef.current.push(bac)
       setBacCount(c => c + 1)
       setPhase('running')
     } else {
@@ -359,6 +362,7 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
 
   const handleStartNight = async () => {
     sessionIdRef.current = uuidv4()
+    sessionBacsRef.current = []
     console.log('[record] starting night out, userId:', userId, 'sessionId:', sessionIdRef.current)
     if (!userId) console.warn('[record] no userId — location tracking will not start')
     if (userId) {
@@ -395,6 +399,13 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
     if (userId && sessionIdRef.current) {
       console.log('[record] ending night out, stopping location tracking and syncing')
       await stopLocationTracking(sessionIdRef.current, userId)
+      await saveNightOutSession({
+        sessionId: sessionIdRef.current,
+        userId,
+        durationSeconds: elapsed,
+        cigCount,
+        maxBac: sessionBacsRef.current.length ? Math.max(...sessionBacsRef.current) : null,
+      })
     }
     setPhase('done')
   }

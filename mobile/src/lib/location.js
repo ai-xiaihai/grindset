@@ -133,6 +133,14 @@ export async function stopLocationTracking(sessionId, userId) {
   const isRunning = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK)
   if (isRunning) await Location.stopLocationUpdatesAsync(LOCATION_TASK)
   await syncToSupabase(sessionId, userId)
+
+  const { error } = await supabase
+    .from('night_out_locations')
+    .update({ ended_at: new Date().toISOString() })
+    .eq('session_id', sessionId)
+    .eq('user_id', userId)
+  if (error) console.error('[location] failed to set ended_at:', error)
+
   await AsyncStorage.removeItem('night_out_meta')
   await AsyncStorage.removeItem('night_out_last_sync')
 }

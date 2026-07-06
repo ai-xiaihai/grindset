@@ -173,10 +173,10 @@ function NightOutCard({ post }) {
   )
 }
 
-async function fetchMyNightOuts(userId) {
+async function fetchMyNightOuts(userId, userName) {
   const { data: locations, error } = await supabase
     .from('night_out_locations')
-    .select('session_id, latitude, longitude, recorded_at')
+    .select('session_id, latitude, longitude, recorded_at, ended_at')
     .eq('user_id', userId)
     .order('recorded_at', { ascending: true })
   if (error) console.error('[feed] failed to load locations:', error)
@@ -192,17 +192,21 @@ async function fetchMyNightOuts(userId) {
       const first = points[0]
       const last = points[points.length - 1]
       const startedAt = new Date(first.recorded_at)
-      const durationSeconds = points.length > 1
-        ? Math.round((new Date(last.recorded_at) - new Date(first.recorded_at)) / 1000)
-        : 0
+      const endedAt = points.find(p => p.ended_at)?.ended_at
+      // Without an explicit end time, a single point isn't enough to know the duration.
+      const durationSeconds = endedAt
+        ? Math.round((new Date(endedAt) - startedAt) / 1000)
+        : points.length > 1
+          ? Math.round((new Date(last.recorded_at) - startedAt) / 1000)
+          : null
 
       return {
         id: sessionId,
-        name: 'alex',
+        name: (userName ?? 'you').toLowerCase(),
         photo: null,
         startedAt,
         date: fmtFeedDate(startedAt),
-        duration: fmtDuration(durationSeconds),
+        duration: durationSeconds != null ? fmtDuration(durationSeconds) : null,
         route: points.length > 1 ? points.map(p => ({ latitude: p.latitude, longitude: p.longitude })) : null,
         color: '#58CC02',
         daps: 0,
@@ -211,7 +215,7 @@ async function fetchMyNightOuts(userId) {
     .sort((a, b) => b.startedAt - a.startedAt)
 }
 
-export default function FeedScreen({ userId }) {
+export default function FeedScreen({ userId, userName }) {
   const insets = useSafeAreaInsets()
   const [myPosts, setMyPosts] = useState([])
 
@@ -219,11 +223,11 @@ export default function FeedScreen({ userId }) {
     useCallback(() => {
       if (!userId) return
       let cancelled = false
-      fetchMyNightOuts(userId).then(posts => {
+      fetchMyNightOuts(userId, userName).then(posts => {
         if (!cancelled) setMyPosts(posts)
       })
       return () => { cancelled = true }
-    }, [userId])
+    }, [userId, userName])
   )
 
   const allPosts = [...myPosts, ...MOCK_POSTS]

@@ -49,7 +49,7 @@ function MainTabs({ session, profile, stats, entries, bacEntries, onAddEntry, on
         })}
       >
         <Tab.Screen name="Feed">
-          {() => <FeedScreen userId={session?.user?.id} />}
+          {() => <FeedScreen userId={session?.user?.id} userName={profile?.name} />}
         </Tab.Screen>
         <Tab.Screen name="Leaderboard">
           {() => <LeaderboardScreen stats={stats} profile={profile} />}

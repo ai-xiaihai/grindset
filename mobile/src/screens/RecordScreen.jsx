@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   View, Text, Pressable, TextInput, Image, ScrollView,
-  StyleSheet, KeyboardAvoidingView, Platform, Alert, Linking,
+  StyleSheet, KeyboardAvoidingView, Platform, Alert, Linking, DeviceEventEmitter,
 } from 'react-native'
 import { CameraView, useCameraPermissions } from 'expo-camera'
 import * as ImagePicker from 'expo-image-picker'
@@ -13,6 +13,7 @@ import {
   requestLocationPermissions,
   startLocationTracking,
   stopLocationTracking,
+  SESSION_ENDED_REMOTELY_EVENT,
 } from '../lib/location'
 
 const HEROES = [
@@ -333,6 +334,16 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
       clearInterval(intervalRef.current)
     }
     return () => clearInterval(intervalRef.current)
+  }, [phase])
+
+  useEffect(() => {
+    const sub = DeviceEventEmitter.addListener(SESSION_ENDED_REMOTELY_EVENT, ({ sessionId }) => {
+      if (sessionId !== sessionIdRef.current) return
+      if (phase !== 'running' && phase !== 'paused') return
+      Alert.alert('Night Out Ended', "This session was automatically closed after an hour of inactivity — it's already been saved.")
+      setPhase('done')
+    })
+    return () => sub.remove()
   }, [phase])
 
   const xpGained = bacCount * 25 + cigCount * 10 + Math.floor(elapsed / 60) * 5

@@ -1,9 +1,11 @@
 import * as Location from 'expo-location'
 import * as TaskManager from 'expo-task-manager'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { DeviceEventEmitter } from 'react-native'
 import { supabase } from './supabase'
 
 export const LOCATION_TASK = 'BACKGROUND_LOCATION_TASK'
+export const SESSION_ENDED_REMOTELY_EVENT = 'nightOutSessionEndedRemotely'
 
 const STORAGE_KEY = 'night_out_points'
 const MIN_DISTANCE_M = 20
@@ -48,6 +50,14 @@ async function syncToSupabase(sessionId, userId) {
 
   const { error } = await supabase.from('night_out_locations').insert(rows)
   if (error) {
+    if (error.code === '42501') {
+      console.warn('[location] session was already ended remotely, stopping tracking')
+      await Location.stopLocationUpdatesAsync(LOCATION_TASK).catch(() => {})
+      await AsyncStorage.removeItem('night_out_meta')
+      await AsyncStorage.removeItem('night_out_last_sync')
+      DeviceEventEmitter.emit(SESSION_ENDED_REMOTELY_EVENT, { sessionId })
+      return
+    }
     console.error('[location] failed to sync points to supabase:', error)
     return
   }
@@ -140,6 +150,7 @@ export async function stopLocationTracking(sessionId, userId) {
     .update({ ended_at: new Date().toISOString() })
     .eq('session_id', sessionId)
     .eq('user_id', userId)
+    .is('ended_at', null)
   if (error) console.error('[location] failed to set ended_at:', error)
 
   await AsyncStorage.removeItem('night_out_meta')

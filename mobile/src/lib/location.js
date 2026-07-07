@@ -77,7 +77,7 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
   const { sessionId, userId } = JSON.parse(meta)
 
   const stored = await getStoredPoints()
-  const last = stored[stored.length - 1]
+  let last = stored[stored.length - 1]
 
   for (const loc of locations) {
     const { latitude, longitude } = loc.coords
@@ -86,6 +86,7 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
       continue
     }
     await appendPoint({ latitude, longitude, recorded_at: new Date().toISOString(), synced: false })
+    last = { latitude, longitude }
     console.log(`[location] appended point ${latitude}, ${longitude}`)
   }
 

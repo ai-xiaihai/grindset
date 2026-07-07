@@ -6,7 +6,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useFocusEffect } from '@react-navigation/native'
 import * as Haptics from 'expo-haptics'
-import MapView, { Polyline, PROVIDER_DEFAULT } from 'react-native-maps'
+import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from 'react-native-maps'
 import FRIENDS from '../data/friends.json'
 import { truncateName, fmtDuration, fmtFeedDate } from '../lib/utils'
 import { supabase } from '../lib/supabase'
@@ -28,7 +28,7 @@ function centerOf(coords) {
 }
 
 function RouteMap({ route, color }) {
-  if (Platform.OS !== 'web' && Array.isArray(route) && route.length > 1) {
+  if (Platform.OS !== 'web' && Array.isArray(route) && route.length > 0) {
     return (
       <MapView
         style={styles.mapContainer}
@@ -40,7 +40,9 @@ function RouteMap({ route, color }) {
         rotateEnabled={false}
         customMapStyle={DARK_MAP_STYLE}
       >
-        <Polyline coordinates={route} strokeColor={color} strokeWidth={3} />
+        {route.length > 1
+          ? <Polyline coordinates={route} strokeColor={color} strokeWidth={3} />
+          : <Marker coordinate={route[0]}><Text style={styles.starMarker}>⭐</Text></Marker>}
       </MapView>
     )
   }
@@ -207,7 +209,7 @@ async function fetchMyNightOuts(userId, userName) {
         startedAt,
         date: fmtFeedDate(startedAt),
         duration: durationSeconds != null ? fmtDuration(durationSeconds) : null,
-        route: points.length > 1 ? points.map(p => ({ latitude: p.latitude, longitude: p.longitude })) : null,
+        route: points.map(p => ({ latitude: p.latitude, longitude: p.longitude })),
         color: '#58CC02',
         daps: 0,
       }
@@ -274,6 +276,7 @@ const styles = StyleSheet.create({
   cardPhoto: { width: '100%', height: 220 },
   mapContainer: { width: '100%', height: 190 },
   mapImage: { width: '100%', height: 190 },
+  starMarker: { fontSize: 28 },
 
   statsRow: { flexDirection: 'row', padding: 14, gap: 20 },
   stat: {},

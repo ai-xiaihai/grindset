@@ -144,17 +144,44 @@ export async function stopLocationTracking(sessionId, userId) {
   const isRunning = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK)
   if (isRunning) await Location.stopLocationUpdatesAsync(LOCATION_TASK)
   await syncToSupabase(sessionId, userId)
+  await closeSession(sessionId, userId, new Date().toISOString())
 
+  await AsyncStorage.removeItem('night_out_meta')
+  await AsyncStorage.removeItem('night_out_last_sync')
+}
+
+async function closeSession(sessionId, userId, endedAt) {
   const { error } = await supabase
     .from('night_out_locations')
-    .update({ ended_at: new Date().toISOString() })
+    .update({ ended_at: endedAt })
     .eq('session_id', sessionId)
     .eq('user_id', userId)
     .is('ended_at', null)
   if (error) console.error('[location] failed to set ended_at:', error)
+}
+
+// Called once on app launch. If a previous run left an active session behind
+// (the app was killed/crashed instead of the user tapping "it's over"), finish
+// it now using the last point we actually captured, not the current time.
+export async function reconcileDanglingSession() {
+  const meta = await AsyncStorage.getItem('night_out_meta')
+  if (!meta) return
+
+  const { sessionId, userId } = JSON.parse(meta)
+  console.log('[location] found a dangling session from a previous run, reconciling', sessionId)
+
+  const isRunning = await Location.hasStartedLocationUpdatesAsync(LOCATION_TASK)
+  if (isRunning) await Location.stopLocationUpdatesAsync(LOCATION_TASK)
+
+  await syncToSupabase(sessionId, userId)
+
+  const points = await getStoredPoints()
+  const lastPoint = points[points.length - 1]
+  await closeSession(sessionId, userId, lastPoint?.recorded_at ?? new Date().toISOString())
 
   await AsyncStorage.removeItem('night_out_meta')
   await AsyncStorage.removeItem('night_out_last_sync')
+  await AsyncStorage.removeItem(STORAGE_KEY)
 }
 
 export { getStoredPoints }

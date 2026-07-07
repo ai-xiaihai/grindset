@@ -7,6 +7,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { supabase } from './src/lib/supabase'
+import { reconcileDanglingSession } from './src/lib/location'
 import AuthScreen from './src/screens/AuthScreen'
 import OnboardingScreen from './src/screens/OnboardingScreen'
 import FeedScreen from './src/screens/FeedScreen'
@@ -84,6 +85,11 @@ function AppInner({ session, profile }) {
       }
       if (streakRaw) setStreak(JSON.parse(streakRaw))
     })
+  }, [])
+
+  // If a night out was left running when the app was last killed, close it out now.
+  useEffect(() => {
+    reconcileDanglingSession()
   }, [])
 
   useEffect(() => {

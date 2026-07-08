@@ -128,6 +128,7 @@ export async function startLocationTracking(sessionId, userId) {
     synced: false,
   })
   console.log(`[location] captured initial fix ${initial.coords.latitude}, ${initial.coords.longitude}`)
+  await syncToSupabase(sessionId, userId)
 
   await Location.startLocationUpdatesAsync(LOCATION_TASK, {
     accuracy: Location.Accuracy.Balanced,

@@ -9,7 +9,8 @@ export const SESSION_ENDED_REMOTELY_EVENT = 'nightOutSessionEndedRemotely'
 
 const STORAGE_KEY = 'night_out_points'
 const MIN_DISTANCE_M = 20
-const SYNC_INTERVAL_MS = 5 * 60 * 1000
+const SYNC_INTERVAL_MOVING_MS = 60 * 1000
+const SYNC_INTERVAL_STATIONARY_MS = 5 * 60 * 1000
 
 function haversineMeters(lat1, lon1, lat2, lon2) {
   const R = 6371000
@@ -88,6 +89,7 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
 
   const stored = await getStoredPoints()
   let last = stored[stored.length - 1]
+  let moved = false
 
   for (const loc of locations) {
     const { latitude, longitude } = loc.coords
@@ -97,11 +99,13 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
     }
     await appendPoint({ latitude, longitude, recorded_at: new Date().toISOString(), synced: false })
     last = { latitude, longitude }
+    moved = true
     console.log(`[location] appended point ${latitude}, ${longitude}`)
   }
 
+  const syncIntervalMs = moved ? SYNC_INTERVAL_MOVING_MS : SYNC_INTERVAL_STATIONARY_MS
   const lastSync = await AsyncStorage.getItem('night_out_last_sync')
-  if (!lastSync || Date.now() - parseInt(lastSync) > SYNC_INTERVAL_MS) {
+  if (!lastSync || Date.now() - parseInt(lastSync) > syncIntervalMs) {
     await syncToSupabase(sessionId, userId)
     await AsyncStorage.setItem('night_out_last_sync', String(Date.now()))
   }

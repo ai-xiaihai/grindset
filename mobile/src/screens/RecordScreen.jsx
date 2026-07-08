@@ -326,12 +326,24 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
   const returnPhaseRef = useRef('idle')
   const intervalRef = useRef(null)
   const sessionIdRef = useRef(null)
+  const startedAtRef = useRef(null)
+  const accumulatedRef = useRef(0)
 
   useEffect(() => {
     if (phase === 'running') {
-      intervalRef.current = setInterval(() => setElapsed(e => e + 1), 1000)
+      if (!startedAtRef.current) startedAtRef.current = Date.now()
+      const tick = () => {
+        const segmentSeconds = Math.floor((Date.now() - startedAtRef.current) / 1000)
+        setElapsed(accumulatedRef.current + segmentSeconds)
+      }
+      tick()
+      intervalRef.current = setInterval(tick, 1000)
     } else {
       clearInterval(intervalRef.current)
+      if (startedAtRef.current) {
+        accumulatedRef.current += Math.floor((Date.now() - startedAtRef.current) / 1000)
+        startedAtRef.current = null
+      }
     }
     return () => clearInterval(intervalRef.current)
   }, [phase])
@@ -435,6 +447,8 @@ export default function RecordScreen({ userId, onAddEntry, onAddBac }) {
     setBacCount(0)
     setCigCount(0)
     sessionIdRef.current = null
+    startedAtRef.current = null
+    accumulatedRef.current = 0
   }
 
   const shared = { insets }

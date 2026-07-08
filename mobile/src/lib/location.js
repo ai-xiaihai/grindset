@@ -152,11 +152,24 @@ export async function stopLocationTracking(sessionId, userId) {
 }
 
 async function closeSession(sessionId, userId, endedAt) {
+  const { data: lastRow, error: selectError } = await supabase
+    .from('night_out_locations')
+    .select('id')
+    .eq('session_id', sessionId)
+    .eq('user_id', userId)
+    .order('recorded_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (selectError) {
+    console.error('[location] failed to find last point to close session:', selectError)
+    return
+  }
+  if (!lastRow) return
+
   const { error } = await supabase
     .from('night_out_locations')
     .update({ ended_at: endedAt })
-    .eq('session_id', sessionId)
-    .eq('user_id', userId)
+    .eq('id', lastRow.id)
     .is('ended_at', null)
   if (error) console.error('[location] failed to set ended_at:', error)
 }

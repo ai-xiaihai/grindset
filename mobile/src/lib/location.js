@@ -12,7 +12,7 @@ const MIN_DISTANCE_M = 20
 const SYNC_INTERVAL_MOVING_MS = 60 * 1000
 const SYNC_INTERVAL_STATIONARY_MS = 5 * 60 * 1000
 
-function haversineMeters(lat1, lon1, lat2, lon2) {
+export function haversineMeters(lat1, lon1, lat2, lon2) {
   const R = 6371000
   const dLat = ((lat2 - lat1) * Math.PI) / 180
   const dLon = ((lon2 - lon1) * Math.PI) / 180

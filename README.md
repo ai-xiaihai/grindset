@@ -1,5 +1,7 @@
 # grindset
 
+[![Mobile Tests](https://github.com/ai-xiaihai/grindset/actions/workflows/mobile-tests.yml/badge.svg)](https://github.com/ai-xiaihai/grindset/actions/workflows/mobile-tests.yml)
+
 A mobile-first lifestyle tracking app for logging vapes, drinks, and BAC — with a social feed, leaderboard, and friend nudges.
 
 ## Features

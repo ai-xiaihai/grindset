@@ -111,6 +111,10 @@ describe('background location task', () => {
     expect(stored[1].latitude).toBe(40.001)
   })
 
+  it('returns an empty array from getStoredPoints when nothing has been recorded yet', async () => {
+    expect(await getStoredPoints()).toEqual([])
+  })
+
   it('does nothing when there is no active session', async () => {
     await taskHandler({ data: { locations: [{ coords: { latitude: 1, longitude: 1 } }] }, error: null })
     expect(await getStoredPoints()).toHaveLength(0)
